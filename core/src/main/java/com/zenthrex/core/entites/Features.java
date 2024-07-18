@@ -1,6 +1,6 @@
 package com.zenthrex.core.entites;
 
-import com.zenthrex.core.enums.OptionType;
+import com.zenthrex.core.enums.FeaturesType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,14 +12,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Options {
+public class Features {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
+    private String icon;
     @Enumerated(EnumType.STRING)
-    private OptionType type;
+    private FeaturesType type;
     @ElementCollection
     private List<String> entities;
 }
