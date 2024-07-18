@@ -1,10 +1,10 @@
-package com.trivosoft.caravan;
+package com.zenthrex.trivo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CaravanApplicationTests {
+class TrivoApplicationTests {
 
 	@Test
 	void contextLoads() {

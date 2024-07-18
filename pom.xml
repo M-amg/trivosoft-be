@@ -8,11 +8,12 @@
 		<version>3.3.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.trivosoft</groupId>
-	<artifactId>caravan</artifactId>
+	<groupId>com.zenthrex</groupId>
+	<artifactId>trivo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>caravan</name>
-	<description>caravan api</description>
+    <packaging>pom</packaging>
+    <name>trivo</name>
+	<description>zenthrex project </description>
 	<url/>
 	<licenses>
 		<license/>
@@ -20,7 +21,12 @@
 	<developers>
 		<developer/>
 	</developers>
-	<scm>
+    <modules>
+        <module>core</module>
+		<module>caravan</module>
+		<module>crm</module>
+	</modules>
+    <scm>
 		<connection/>
 		<developerConnection/>
 		<tag/>
@@ -39,12 +45,6 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-docker-compose</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
-		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
