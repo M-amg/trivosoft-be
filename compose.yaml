@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=trivo'
+      - 'POSTGRES_PASSWORD=trivo'
+      - 'POSTGRES_USER=trivo'
+    ports:
+      - '5432'
