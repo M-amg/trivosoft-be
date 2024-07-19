@@ -22,4 +22,10 @@ public class CaravanPricing {
     private Double weekEndSupp;
     private Double limitKM;
     private Double kmPricing;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "caravan_id", nullable = false)
+    private Caravan caravan;
+
+
 }

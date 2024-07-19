@@ -28,11 +28,11 @@ public class ProcurementOrderLine {
     private Long entityId;
     private String status;
 
-    @ManyToOne
-    @JoinColumn(name = "command_id")
-    private ProcurementOrder command;
-
     @CreationTimestamp
     @Column(name = "created_on")
     private LocalDateTime createdOn;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "procurement_order_id", nullable = false)
+    private ProcurementOrder procurementOrder;
 }

@@ -18,6 +18,10 @@ public class CaravanStopSelling {
     private Long id;
 
     private LocalDate day;
-    private String raisen;
+    private String reason;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "caravan_id", nullable = false)
+    private Caravan caravan;
 
 }

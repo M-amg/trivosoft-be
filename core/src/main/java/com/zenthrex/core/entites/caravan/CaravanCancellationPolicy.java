@@ -21,4 +21,8 @@ public class CaravanCancellationPolicy {
     private Double penality;
     @Enumerated(EnumType.STRING)
     private PenalityType penalityType;
+
+    @ManyToOne
+    @JoinColumn(name = "caravan_id", nullable = false)
+    private Caravan caravan;
 }
