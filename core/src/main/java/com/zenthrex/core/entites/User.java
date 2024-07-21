@@ -1,11 +1,15 @@
 package com.zenthrex.core.entites;
 
+import com.zenthrex.core.entites.caravan.Caravan;
+import com.zenthrex.core.entites.caravan.CaravanBooking;
+import com.zenthrex.core.entites.crm.Payment;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -30,4 +34,5 @@ public class User {
     @CreationTimestamp
     @Column(name = "created_on")
     private LocalDateTime createdOn;
+
 }

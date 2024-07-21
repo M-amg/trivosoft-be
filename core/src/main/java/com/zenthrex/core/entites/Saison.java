@@ -1,12 +1,11 @@
 package com.zenthrex.core.entites;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.zenthrex.core.entites.caravan.CaravanPricing;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Getter
@@ -23,5 +22,7 @@ public class Saison {
     private LocalDate startDate;
     private LocalDate endDate;
     private String name;
+
+
 
 }

@@ -1,6 +1,7 @@
 package com.zenthrex.core.entites.crm;
 
 
+import com.zenthrex.core.entites.User;
 import com.zenthrex.core.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,4 +25,8 @@ public class Payment {
     private Double margin;
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
+    @ManyToOne
+    @JoinColumn(name = "procurement_order_id", nullable = false)
+    private ProcurementOrder procurementOrder;
+
 }

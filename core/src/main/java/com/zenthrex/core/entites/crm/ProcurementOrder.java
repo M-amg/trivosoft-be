@@ -6,6 +6,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -29,4 +31,12 @@ public class ProcurementOrder {
     @CreationTimestamp
     @Column(name = "created_on")
     private LocalDateTime createdOn;
+
+
+    @OneToMany(mappedBy = "procurementOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProcurementOrderLine> procurementOrderLines;
+
+    @OneToMany(mappedBy = "procurementOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Payment> paiments;
+
 }
