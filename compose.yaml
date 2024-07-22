@@ -1,9 +1,16 @@
+version: '3.8'
 services:
-  postgres:
-    image: 'postgres:latest'
+  trivo:
+    image: postgres:14.1-alpine
+    restart: always
     environment:
-      - 'POSTGRES_DB=trivo'
-      - 'POSTGRES_PASSWORD=trivo'
-      - 'POSTGRES_USER=trivo'
+      - POSTGRES_USER=trivo
+      - POSTGRES_PASSWORD=trivo
+      - POSTGRES_DATABASE=trivo
     ports:
-      - '5432'
+      - '5432:5432'
+    volumes:
+      - db:/var/lib/postgresql/data
+volumes:
+  db:
+    driver: local

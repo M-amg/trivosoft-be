@@ -1,6 +1,5 @@
 package com.zenthrex.core.entites;
 
-import com.zenthrex.core.entites.caravan.Caravan;
 import com.zenthrex.core.enums.FeaturesType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,6 +23,4 @@ public class Features {
     private FeaturesType type;
     @ElementCollection
     private List<String> entities;
-    @ManyToMany(mappedBy = "features")
-    private List<Caravan> caravans;
 }

@@ -1,0 +1,182 @@
+
+components:
+  schemas:
+    Caravan:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "Luxury Caravan"
+        description:
+          type: string
+          example: "A luxury caravan with all modern amenities."
+        vin:
+          type: string
+          example: "1HGCM82633A123456"
+        category:
+          type: string
+          enum:
+            - SMALL
+            - MEDIUM
+            - LARGE
+          example: "MEDIUM"
+        brand:
+          type: string
+          example: "CaravanBrand"
+        model:
+          type: string
+          example: "ModelX"
+        year:
+          type: integer
+          example: 2021
+        height:
+          type: number
+          format: double
+          example: 3.5
+        weight:
+          type: number
+          format: double
+          example: 1500.0
+        canMove:
+          type: boolean
+          example: true
+        numberBed:
+          type: integer
+          example: 4
+        originalPrice:
+          type: number
+          format: double
+          example: 30000.0
+        status:
+          type: string
+          enum:
+            - AVAILABLE
+            - UNAVAILABLE
+          example: "AVAILABLE"
+        latitude:
+          type: number
+          format: double
+          example: 34.052235
+        longitude:
+          type: number
+          format: double
+          example: -118.243683
+        isImmediatelyBooked:
+          type: boolean
+          example: false
+        assuranceAmount:
+          type: number
+          format: double
+          example: 500.0
+        caravanPrices:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaravanPricing'
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/Features'
+        stopSells:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaravanStopSelling'
+        cancellationPolicies:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaravanCancellationPolicy'
+
+    CaravanPricing:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        days:
+          type: integer
+          example: 7
+        price:
+          type: number
+          format: double
+          example: 500.0
+        defaultPrice:
+          type: number
+          format: double
+          example: 450.0
+        weekEndSupp:
+          type: number
+          format: double
+          example: 50.0
+        limitKM:
+          type: number
+          format: double
+          example: 1000.0
+        kmPricing:
+          type: number
+          format: double
+          example: 0.5
+
+    Features:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "Air Conditioning"
+        icon:
+          type: string
+          example: "ac_icon.png"
+        type:
+          type: string
+          enum:
+            - INTERIOR
+            - EXTERIOR
+            - SAFETY
+          example: "INTERIOR"
+        entities:
+          type: array
+          items:
+            type: string
+            example: "entity1"
+
+    CaravanStopSelling:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        day:
+          type: string
+          format: date
+          example: "2024-07-22"
+        reason:
+          type: string
+          example: "Maintenance"
+
+
+    CaravanCancellationPolicy:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        description:
+          type: string
+          example: "Cancellation policy description"
+        daysBefore:
+          type: integer
+          example: 30
+        penalty:
+          type: number
+          format: double
+          example: 100.0
+        penaltyType:
+          type: string
+          enum:
+            - FIXED
+            - PERCENTAGE
+          example: "FIXED"

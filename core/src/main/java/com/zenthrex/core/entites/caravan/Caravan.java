@@ -1,7 +1,6 @@
 package com.zenthrex.core.entites.caravan;
 
 import com.zenthrex.core.entites.Features;
-import com.zenthrex.core.entites.User;
 import com.zenthrex.core.enums.CaravanCategory;
 import com.zenthrex.core.enums.CaravanStatus;
 import jakarta.persistence.*;
@@ -43,11 +42,11 @@ public class Caravan {
 
 
     @OneToMany(mappedBy = "caravan", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CaravanPricing> caravanPricings;
+    private List<CaravanPricing> caravanPrices;
 
     @ManyToMany
     @JoinTable(
-            name = "CaravanFeatures",
+            name = "caravan_features",
             joinColumns = @JoinColumn(name = "caravan_id"),
             inverseJoinColumns = @JoinColumn(name = "feature_id")
     )

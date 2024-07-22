@@ -1,0 +1,612 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1721601140783-1
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_caravan
+                  name: id
+                  type: INT
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  name: vin
+                  type: VARCHAR(255)
+              - column:
+                  name: category
+                  type: VARCHAR(255)
+              - column:
+                  name: brand
+                  type: VARCHAR(255)
+              - column:
+                  name: model
+                  type: VARCHAR(255)
+              - column:
+                  name: year
+                  type: INT
+              - column:
+                  name: height
+                  type: DOUBLE
+              - column:
+                  name: weight
+                  type: DOUBLE
+              - column:
+                  name: can_move
+                  type: BOOLEAN
+              - column:
+                  name: number_bed
+                  type: INT
+              - column:
+                  name: original_price
+                  type: DOUBLE
+              - column:
+                  name: status
+                  type: VARCHAR(255)
+              - column:
+                  name: latitude
+                  type: DOUBLE
+              - column:
+                  name: longitude
+                  type: DOUBLE
+              - column:
+                  name: is_immediately_booked
+                  type: BOOLEAN
+              - column:
+                  name: assurance_amount
+                  type: DOUBLE
+            tableName: caravan
+  - changeSet:
+      id: 1721601140783-2
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: caravan_id
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: feature_id
+                  type: BIGINT
+            tableName: caravan_features
+  - changeSet:
+      id: 1721601140783-3
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_command_lines
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: designation
+                  type: VARCHAR(255)
+              - column:
+                  name: quantity
+                  type: INT
+              - column:
+                  name: unit_price
+                  type: DOUBLE
+              - column:
+                  name: vat
+                  type: DOUBLE
+              - column:
+                  name: margin
+                  type: DOUBLE
+              - column:
+                  name: entity
+                  type: VARCHAR(255)
+              - column:
+                  name: entity_id
+                  type: BIGINT
+              - column:
+                  name: status
+                  type: VARCHAR(255)
+              - column:
+                  name: created_on
+                  type: DATETIME
+              - column:
+                  constraints:
+                    nullable: false
+                  name: procurement_order_id
+                  type: BIGINT
+            tableName: command_lines
+  - changeSet:
+      id: 1721601140783-4
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_commands
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: number
+                  type: VARCHAR(255)
+              - column:
+                  name: total
+                  type: DOUBLE
+              - column:
+                  name: vat
+                  type: DOUBLE
+              - column:
+                  name: margin
+                  type: DOUBLE
+              - column:
+                  name: status
+                  type: VARCHAR(255)
+              - column:
+                  name: created_on
+                  type: DATETIME
+            tableName: commands
+  - changeSet:
+      id: 1721601140783-5
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_cr_booking
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: start_date
+                  type: DATE
+              - column:
+                  name: end_date
+                  type: DATE
+              - column:
+                  name: price_unite
+                  type: DOUBLE
+              - column:
+                  name: assurance_price
+                  type: DOUBLE
+              - column:
+                  name: pick_up
+                  type: VARCHAR(255)
+              - column:
+                  name: margin
+                  type: DOUBLE
+              - column:
+                  name: status
+                  type: VARCHAR(255)
+              - column:
+                  name: created_on
+                  type: DATETIME
+              - column:
+                  constraints:
+                    nullable: false
+                  name: caravan_id
+                  type: INT
+            tableName: cr_booking
+  - changeSet:
+      id: 1721601140783-6
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_cr_cancellation_policy
+                  name: id
+                  type: INT
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  name: days_before
+                  type: INT
+              - column:
+                  name: penalty
+                  type: DOUBLE
+              - column:
+                  name: penalty_type
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: caravan_id
+                  type: INT
+            tableName: cr_cancellation_policy
+  - changeSet:
+      id: 1721601140783-7
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_cr_pricing
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: days
+                  type: INT
+              - column:
+                  name: price
+                  type: DOUBLE
+              - column:
+                  name: default_price
+                  type: DOUBLE
+              - column:
+                  name: week_end_supp
+                  type: DOUBLE
+              - column:
+                  name: limitkm
+                  type: DOUBLE
+              - column:
+                  name: km_pricing
+                  type: DOUBLE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: caravan_id
+                  type: INT
+            tableName: cr_pricing
+  - changeSet:
+      id: 1721601140783-8
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_cr_stop_selling
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: day
+                  type: DATE
+              - column:
+                  name: reason
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: caravan_id
+                  type: INT
+            tableName: cr_stop_selling
+  - changeSet:
+      id: 1721601140783-9
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_features
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+              - column:
+                  name: icon
+                  type: VARCHAR(255)
+              - column:
+                  name: type
+                  type: VARCHAR(255)
+            tableName: features
+  - changeSet:
+      id: 1721601140783-10
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: features_id
+                  type: BIGINT
+              - column:
+                  name: entities
+                  type: VARCHAR(255)
+            tableName: features_entities
+  - changeSet:
+      id: 1721601140783-11
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_image
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: image
+                  type: VARCHAR(255)
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+              - column:
+                  name: entity
+                  type: VARCHAR(255)
+              - column:
+                  name: entity_id
+                  type: BIGINT
+            tableName: image
+  - changeSet:
+      id: 1721601140783-12
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_payment
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: type
+                  type: VARCHAR(255)
+              - column:
+                  name: amount
+                  type: DOUBLE
+              - column:
+                  name: operation_number
+                  type: VARCHAR(255)
+              - column:
+                  name: assurance_price
+                  type: DOUBLE
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: margin
+                  type: DOUBLE
+              - column:
+                  name: status
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: procurement_order_id
+                  type: BIGINT
+            tableName: payment
+  - changeSet:
+      id: 1721601140783-13
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_season
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: start_date
+                  type: DATE
+              - column:
+                  name: end_date
+                  type: DATE
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+            tableName: season
+  - changeSet:
+      id: 1721601140783-14
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_user
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: firstname
+                  type: VARCHAR(255)
+              - column:
+                  name: lastname
+                  type: VARCHAR(255)
+              - column:
+                  name: phone
+                  type: VARCHAR(255)
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+              - column:
+                  name: status
+                  type: VARCHAR(255)
+              - column:
+                  name: created_on
+                  type: DATETIME
+            tableName: user
+  - changeSet:
+      id: 1721601140783-15
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  name: roles
+                  type: VARCHAR(255)
+            tableName: user_roles
+  - changeSet:
+      id: 1721601140783-16
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: procurement_order_id
+            baseTableName: command_lines
+            constraintName: FK_COMMAND_LINES_ON_PROCUREMENT_ORDER
+            referencedColumnNames: id
+            referencedTableName: commands
+  - changeSet:
+      id: 1721601140783-17
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: caravan_id
+            baseTableName: cr_booking
+            constraintName: FK_CR_BOOKING_ON_CARAVAN
+            referencedColumnNames: id
+            referencedTableName: caravan
+  - changeSet:
+      id: 1721601140783-18
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: caravan_id
+            baseTableName: cr_cancellation_policy
+            constraintName: FK_CR_CANCELLATION_POLICY_ON_CARAVAN
+            referencedColumnNames: id
+            referencedTableName: caravan
+  - changeSet:
+      id: 1721601140783-19
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: caravan_id
+            baseTableName: cr_pricing
+            constraintName: FK_CR_PRICING_ON_CARAVAN
+            referencedColumnNames: id
+            referencedTableName: caravan
+  - changeSet:
+      id: 1721601140783-20
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: caravan_id
+            baseTableName: cr_stop_selling
+            constraintName: FK_CR_STOP_SELLING_ON_CARAVAN
+            referencedColumnNames: id
+            referencedTableName: caravan
+  - changeSet:
+      id: 1721601140783-21
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: procurement_order_id
+            baseTableName: payment
+            constraintName: FK_PAYMENT_ON_PROCUREMENT_ORDER
+            referencedColumnNames: id
+            referencedTableName: commands
+  - changeSet:
+      id: 1721601140783-22
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: caravan_id
+            baseTableName: caravan_features
+            constraintName: fk_carfea_on_caravan
+            referencedColumnNames: id
+            referencedTableName: caravan
+  - changeSet:
+      id: 1721601140783-23
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: feature_id
+            baseTableName: caravan_features
+            constraintName: fk_carfea_on_features
+            referencedColumnNames: id
+            referencedTableName: features
+  - changeSet:
+      id: 1721601140783-24
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: features_id
+            baseTableName: features_entities
+            constraintName: fk_features_entities_on_features
+            referencedColumnNames: id
+            referencedTableName: features
+  - changeSet:
+      id: 1721601140783-25
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: user_roles
+            constraintName: fk_user_roles_on_user
+            referencedColumnNames: id
+            referencedTableName: user
+

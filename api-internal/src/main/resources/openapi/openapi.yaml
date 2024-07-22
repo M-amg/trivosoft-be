@@ -1,0 +1,25 @@
+openapi: 3.0.0
+info:
+  title: Caravan API
+  description: API for managing caravans
+  version: 1.0.0
+
+paths:
+  /api/v1/caravans:
+    post:
+      tags:
+        - caravans
+      operationId: createCaravan
+      description:  create new caravan
+      summary: create new caravan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './caravan/caravan.yaml#/components/schemas/Caravan'
+      responses:
+        '201':
+          description: Successfully created
+        '400':
+          description: Bad Request

@@ -1,6 +1,6 @@
 package com.zenthrex.core.entites.caravan;
 
-import com.zenthrex.core.enums.PenalityType;
+import com.zenthrex.core.enums.PenaltyType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,9 +18,9 @@ public class CaravanCancellationPolicy {
 
     private String description;
     private Integer daysBefore;
-    private Double penality;
+    private Double penalty;
     @Enumerated(EnumType.STRING)
-    private PenalityType penalityType;
+    private PenaltyType penaltyType;
 
     @ManyToOne
     @JoinColumn(name = "caravan_id", nullable = false)
