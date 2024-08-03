@@ -65,6 +65,9 @@ databaseChangeLog:
               - column:
                   name: assurance_amount
                   type: DOUBLE
+              - column:
+                  name: user_id
+                  type: BIGINT
             tableName: caravan
   - changeSet:
       id: 1721601140783-2
@@ -482,6 +485,9 @@ databaseChangeLog:
               - column:
                   name: created_on
                   type: DATETIME
+              - column:
+                  name: role
+                  type: VARCHAR(50)
             tableName: user
   - changeSet:
       id: 1721601140783-15
@@ -491,14 +497,32 @@ databaseChangeLog:
         - createTable:
             columns:
               - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_token
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: token
+                  type: VARCHAR(150)
+              - column:
+                  name: tokenType
+                  type: VARCHAR(10)
+              - column:
+                  name: revoked
+                  type: BOOLEAN
+              - column:
+                  name: expired
+                  type: BOOLEAN
+              - column:
                   constraints:
                     nullable: false
                   name: user_id
                   type: BIGINT
-              - column:
-                  name: roles
-                  type: VARCHAR(255)
-            tableName: user_roles
+            tableName: token
+
   - changeSet:
       id: 1721601140783-16
       author: amghar
@@ -605,8 +629,19 @@ databaseChangeLog:
       changes:
         - addForeignKeyConstraint:
             baseColumnNames: user_id
-            baseTableName: user_roles
-            constraintName: fk_user_roles_on_user
+            baseTableName: token
+            constraintName: FK_TOKEN_ON_USER
+            referencedColumnNames: id
+            referencedTableName: user
+  - changeSet:
+      id: 1721601140783-26
+      author: amghar
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: caravan
+            constraintName: FK_CARAVAN_ON_USER
             referencedColumnNames: id
             referencedTableName: user
 

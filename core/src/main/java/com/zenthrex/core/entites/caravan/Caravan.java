@@ -1,6 +1,7 @@
 package com.zenthrex.core.entites.caravan;
 
 import com.zenthrex.core.entites.Features;
+import com.zenthrex.core.entites.User;
 import com.zenthrex.core.enums.CaravanCategory;
 import com.zenthrex.core.enums.CaravanStatus;
 import jakarta.persistence.*;
@@ -59,4 +60,8 @@ public class Caravan {
 
     @OneToMany(mappedBy = "caravan", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CaravanCancellationPolicy> cancellationPolicies;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

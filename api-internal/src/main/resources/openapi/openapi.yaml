@@ -21,5 +21,9 @@ paths:
       responses:
         '201':
           description: Successfully created
-        '400':
-          description: Bad Request
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: "./commons/commons.yaml#/components/schemas/Error"

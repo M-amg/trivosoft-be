@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>api-internal</artifactId>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -78,11 +79,6 @@
                             <modelNameSuffix>Dto</modelNameSuffix>
                             <configOptions>
                                 <useBeanValidation>true</useBeanValidation>
-                                <additionalModelTypeAnnotations>
-                                    @lombok.NoArgsConstructor
-                                    @lombok.AllArgsConstructor
-                                    @lombok.Builder
-                                </additionalModelTypeAnnotations>
                                 <openApiNullable>false</openApiNullable>
                                 <useTags>true</useTags>
                                 <useSpringBoot3>true</useSpringBoot3>

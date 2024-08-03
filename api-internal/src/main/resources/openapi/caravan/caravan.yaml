@@ -87,6 +87,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CaravanCancellationPolicy'
+        user:
+          $ref: '../user/user.yaml#/components/schemas/User'
 
     CaravanPricing:
       type: object

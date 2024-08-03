@@ -6,6 +6,7 @@
 package com.zenthrex.trivo.api;
 
 import com.zenthrex.trivo.dto.CaravanDto;
+import com.zenthrex.trivo.dto.ErrorDto;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -32,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-07-22T21:39:07.033484200+01:00[Africa/Casablanca]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-08-03T18:14:38.905050800+01:00[Africa/Casablanca]")
 @Validated
 @Tag(name = "caravans", description = "the caravans API")
 public interface CaravansApi {
@@ -47,7 +48,7 @@ public interface CaravansApi {
      *
      * @param caravanDto  (required)
      * @return Successfully created (status code 201)
-     *         or Bad Request (status code 400)
+     *         or error (status code 200)
      */
     @Operation(
         operationId = "createCaravan",
@@ -56,12 +57,15 @@ public interface CaravansApi {
         tags = { "caravans" },
         responses = {
             @ApiResponse(responseCode = "201", description = "Successfully created"),
-            @ApiResponse(responseCode = "400", description = "Bad Request")
+            @ApiResponse(responseCode = "default", description = "error", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))
+            })
         }
     )
     @RequestMapping(
         method = RequestMethod.POST,
         value = "/api/v1/caravans",
+        produces = { "application/json" },
         consumes = { "application/json" }
     )
     

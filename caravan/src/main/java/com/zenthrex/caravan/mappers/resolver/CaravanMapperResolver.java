@@ -5,8 +5,8 @@ import com.zenthrex.core.entites.caravan.Caravan;
 import com.zenthrex.core.repositories.CaravanRepository;
 import com.zenthrex.trivo.dto.CaravanDto;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.ObjectFactory;
-import org.mapstruct.TargetType;
+/*import org.mapstruct.ObjectFactory;
+import org.mapstruct.TargetType;*/
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -16,7 +16,7 @@ import java.util.Optional;
 public class CaravanMapperResolver {
 
 private final CaravanRepository caravanRepository;
-    @ObjectFactory
+ /*   @ObjectFactory
     public Caravan resolve(CaravanDto dto, @TargetType Class<Caravan> type) {
         if (dto != null ) {
             Optional<Caravan> optionalCaravan = caravanRepository.findById(dto.getId());
@@ -26,5 +26,5 @@ private final CaravanRepository caravanRepository;
         }
 
         return new Caravan();
-    }
+    }*/
 }

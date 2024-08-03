@@ -21,12 +21,9 @@ import jakarta.annotation.Generated;
 /**
  * FeaturesDto
  */
-@lombok.NoArgsConstructor
-@lombok.AllArgsConstructor
-@lombok.Builder
 
 @JsonTypeName("Features")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-07-22T21:39:07.033484200+01:00[Africa/Casablanca]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-08-03T18:14:38.905050800+01:00[Africa/Casablanca]")
 public class FeaturesDto {
 
   private Integer id;

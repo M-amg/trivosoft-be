@@ -10,6 +10,7 @@ import com.zenthrex.trivo.dto.CaravanCancellationPolicyDto;
 import com.zenthrex.trivo.dto.CaravanPricingDto;
 import com.zenthrex.trivo.dto.CaravanStopSellingDto;
 import com.zenthrex.trivo.dto.FeaturesDto;
+import com.zenthrex.trivo.dto.UserDto;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,12 +26,9 @@ import jakarta.annotation.Generated;
 /**
  * CaravanDto
  */
-@lombok.NoArgsConstructor
-@lombok.AllArgsConstructor
-@lombok.Builder
 
 @JsonTypeName("Caravan")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-07-22T21:39:07.033484200+01:00[Africa/Casablanca]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-08-03T18:14:38.905050800+01:00[Africa/Casablanca]")
 public class CaravanDto {
 
   private Integer id;
@@ -152,6 +150,8 @@ public class CaravanDto {
 
   @Valid
   private List<@Valid CaravanCancellationPolicyDto> cancellationPolicies;
+
+  private UserDto user;
 
   public CaravanDto id(Integer id) {
     this.id = id;
@@ -625,6 +625,26 @@ public class CaravanDto {
     this.cancellationPolicies = cancellationPolicies;
   }
 
+  public CaravanDto user(UserDto user) {
+    this.user = user;
+    return this;
+  }
+
+  /**
+   * Get user
+   * @return user
+  */
+  @Valid 
+  @Schema(name = "user", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("user")
+  public UserDto getUser() {
+    return user;
+  }
+
+  public void setUser(UserDto user) {
+    this.user = user;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -655,12 +675,13 @@ public class CaravanDto {
         Objects.equals(this.caravanPrices, caravan.caravanPrices) &&
         Objects.equals(this.features, caravan.features) &&
         Objects.equals(this.stopSells, caravan.stopSells) &&
-        Objects.equals(this.cancellationPolicies, caravan.cancellationPolicies);
+        Objects.equals(this.cancellationPolicies, caravan.cancellationPolicies) &&
+        Objects.equals(this.user, caravan.user);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, title, description, vin, category, brand, model, year, height, weight, canMove, numberBed, originalPrice, status, latitude, longitude, isImmediatelyBooked, assuranceAmount, caravanPrices, features, stopSells, cancellationPolicies);
+    return Objects.hash(id, title, description, vin, category, brand, model, year, height, weight, canMove, numberBed, originalPrice, status, latitude, longitude, isImmediatelyBooked, assuranceAmount, caravanPrices, features, stopSells, cancellationPolicies, user);
   }
 
   @Override
@@ -689,6 +710,7 @@ public class CaravanDto {
     sb.append("    features: ").append(toIndentedString(features)).append("\n");
     sb.append("    stopSells: ").append(toIndentedString(stopSells)).append("\n");
     sb.append("    cancellationPolicies: ").append(toIndentedString(cancellationPolicies)).append("\n");
+    sb.append("    user: ").append(toIndentedString(user)).append("\n");
     sb.append("}");
     return sb.toString();
   }
