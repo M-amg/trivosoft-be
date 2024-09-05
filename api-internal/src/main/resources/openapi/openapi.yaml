@@ -1,3 +1,4 @@
+
 openapi: 3.0.0
 info:
   title: Caravan API
@@ -5,7 +6,28 @@ info:
   version: 1.0.0
 
 paths:
-  /api/v1/caravans:
+  /api/v1/sellers/caravans:
+    get:
+      tags:
+        - caravans
+      operationId: getCaravans
+      description: list of caravans
+      summary: list of caravan
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "./caravan/caravan.yaml#/components/schemas/Caravan"
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: "./commons/commons.yaml#/components/schemas/Error"
     post:
       tags:
         - caravans
@@ -21,6 +43,66 @@ paths:
       responses:
         '201':
           description: Successfully created
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: "./commons/commons.yaml#/components/schemas/Error"
+  /api/v1/sellers/caravans/{id}:
+    get:
+      tags:
+        - caravans
+      operationId: getCaravan
+      description: get caravan by id
+      summary: get caravan by id
+      parameters:
+        - $ref: "./caravan/caravan.yaml#/components/parameters/caravanId"
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: "./caravan/caravan.yaml#/components/schemas/Caravan"
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: "./commons/commons.yaml#/components/schemas/Error"
+    put:
+      summary: Update a caravans
+      operationId: updateCaravan
+      tags:
+        - caravans
+      parameters:
+        - $ref: './caravan/caravan.yaml#/components/parameters/caravanId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './caravan/caravan.yaml#/components/schemas/Caravan'
+      responses:
+        '200':
+          description: success
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: "./commons/commons.yaml#/components/schemas/Error"
+    delete:
+      summary: Remove a caravan
+      operationId: removeCaravan
+      tags:
+        - caravans
+      parameters:
+        - $ref: './caravan/caravan.yaml#/components/parameters/caravanId'
+      responses:
+        '200':
+          description: success
         default:
           description: error
           content:

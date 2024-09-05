@@ -1,14 +1,6 @@
 
 components:
   schemas:
-    RoleEnum:
-      type: string
-      enum:
-        - CUSTODIAN
-        - ADMIN
-        - USER
-      example: ADMIN
-
     Permission:
       type: string
       enum:
@@ -53,7 +45,12 @@ components:
           format: date-time
           example: "2024-07-25T12:34:56Z"
         role:
-          $ref: '#/components/schemas/RoleEnum'
+          type: string
+          enum:
+            - BUYER
+            - ADMIN
+            - SELLER
+          example: ADMIN
         tokens:
           type: array
           items:

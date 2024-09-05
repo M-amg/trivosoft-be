@@ -1,23 +1,36 @@
 package com.zenthrex.caravan.helpers;
 
 
-import com.zenthrex.caravan.exceptions.ValidationCaravanException;
+import com.zenthrex.caravan.exceptions.CaravanValidationException;
+import com.zenthrex.core.entites.User;
+import com.zenthrex.core.enums.RoleEnum;
 import com.zenthrex.core.repositories.CaravanRepository;
 import com.zenthrex.trivo.dto.CaravanDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
+@Component
 public class CaravanValidationHelper {
 
     protected final static long MAX_CARAVAN_PER_USER = 5;
+    private final AuditorAware<Integer> auditorAware;
 
-    public static void validateNewCaravan(CaravanDto caravanDto, CaravanRepository caravanRepository) {
+    public void validateNewCaravan(CaravanDto caravanDto, CaravanRepository caravanRepository) {
         if (caravanRepository.findByVin(caravanDto.getVin()).isPresent()) {
-            throw new ValidationCaravanException("VIN must be unique.");
+            throw new CaravanValidationException("VIN must be unique.");
         }
 
         if (caravanDto.getUser() != null && caravanRepository.countByUserId(caravanDto.getUser().getId()) >= MAX_CARAVAN_PER_USER) {
-            throw new ValidationCaravanException("User cannot have more than one caravan.");
+            throw new CaravanValidationException("User cannot have more than one caravan.");
+        }
+    }
+
+    public void validateCaravanUser(User user) {
+        Integer authId = auditorAware.getCurrentAuditor().orElse(null);
+        if (user == null || (user.getRole() != RoleEnum.ADMIN && !user.getId().equals(authId))) {
+            throw new CaravanValidationException("User is not authorized");
         }
     }
 }

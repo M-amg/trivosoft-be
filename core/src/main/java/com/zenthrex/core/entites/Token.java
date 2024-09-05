@@ -14,7 +14,7 @@ import lombok.*;
 @Setter
 public class Token {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Integer id;
     @Column(unique = true)
     public String token;

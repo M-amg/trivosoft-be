@@ -2,21 +2,68 @@ package com.zenthrex.caravan.services;
 
 import com.zenthrex.caravan.helpers.CaravanValidationHelper;
 import com.zenthrex.caravan.mappers.CaravanMapper;
+import com.zenthrex.core.entites.User;
+import com.zenthrex.core.entites.caravan.Caravan;
+import com.zenthrex.core.exception.ResourceNotFoundException;
 import com.zenthrex.core.repositories.CaravanRepository;
 import com.zenthrex.trivo.dto.CaravanDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Objects;
+
+import static com.zenthrex.core.enums.RoleEnum.SELLER;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class CaravanService {
+
+
     private final CaravanRepository caravanRepository;
     private final CaravanMapper caravanMapper;
+    private final CaravanValidationHelper caravanValidationHelper;
 
     public void save(CaravanDto caravanDto) {
-        CaravanValidationHelper.validateNewCaravan(caravanDto,caravanRepository);
+        caravanValidationHelper.validateNewCaravan(caravanDto, caravanRepository);
+        Caravan caravan = caravanMapper.toEntity(caravanDto);
+        caravan.getCaravanPrices().forEach(price -> price.setCaravan(caravan));
+        caravan.getStopSells().forEach(stopSell -> stopSell.setCaravan(caravan));
+        caravan.getCancellationPolicies().forEach(policy -> policy.setCaravan(caravan));
+        log.info("Saving caravan: {}", caravan);
+        caravanRepository.save(caravan);
+    }
+
+    public void delete(Integer id) {
+        Caravan caravan = caravanRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(" caravan not found"));
+        caravanValidationHelper.validateCaravanUser(caravan.getUser());
+        caravanRepository.deleteById(id);
+    }
+
+    public List<CaravanDto> findAll() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication();
+        var caravanDtoList = caravanRepository.findAll().stream().map(caravanMapper::toDto);
+        if (user != null && user.getRole() == SELLER) {
+            caravanDtoList = caravanDtoList.filter(c -> Objects.equals(c.getUser().getId(), user.getId()));
+        }
+        return caravanDtoList.toList();
+    }
+
+    public CaravanDto findById(Integer id) {
+        Caravan caravan = caravanRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(" caravan not found"));
+        caravanValidationHelper.validateCaravanUser(caravan.getUser());
+        return caravanMapper.toDto(caravan);
+    }
+
+    public void update(Integer id, CaravanDto caravanDto) {
+        var caravan = caravanRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(" caravan not found"));
+        caravanValidationHelper.validateCaravanUser(caravan.getUser());
+        caravanDto.setId(id);
         caravanRepository.save(caravanMapper.toEntity(caravanDto));
     }
 }

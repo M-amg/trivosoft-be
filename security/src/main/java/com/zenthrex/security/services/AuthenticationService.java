@@ -2,6 +2,8 @@ package com.zenthrex.security.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zenthrex.core.entites.Token;
+import com.zenthrex.core.entites.User;
+import com.zenthrex.core.exception.ResourceNotFoundException;
 import com.zenthrex.core.repositories.TokenRepository;
 import com.zenthrex.core.repositories.UserRepository;
 import com.zenthrex.security.model.Account;
@@ -32,7 +34,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
-        var user =(Account)
+        var user = (Account)
                 Account.builder()
                         .firstname(request.firstname())
                         .lastname(request.lastname())
@@ -49,9 +51,10 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        log.info("request to login {}", request);
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.email(), request.password()));
-        var user = (Account) accountRepository.findByEmail(request.email()).orElseThrow();
+        var user = new Account(accountRepository.findByEmail(request.email()).orElseThrow(() -> new ResourceNotFoundException(" user not found")));
         log.info("user loaded {}", user);
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
@@ -74,6 +77,7 @@ public class AuthenticationService {
 
     private void revokeAllUserTokens(Account user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
+        log.info("validUserTokens {}", validUserTokens);
         if (validUserTokens.isEmpty()) return;
         validUserTokens.forEach(
                 token -> {
@@ -104,5 +108,22 @@ public class AuthenticationService {
                 new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
             }
         }
+    }
+
+    private Account convertToAccount(User user) {
+        if (user == null) {
+            return null;
+        }
+        return (Account) Account.builder()
+                .id(user.getId())
+                .firstname(user.getFirstname())
+                .lastname(user.getLastname())
+                .phone(user.getPhone())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .status(user.getStatus())
+                .role(user.getRole())
+                .tokens(user.getTokens())
+                .build();
     }
 }

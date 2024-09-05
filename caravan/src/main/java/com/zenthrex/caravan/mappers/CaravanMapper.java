@@ -4,6 +4,7 @@ import com.zenthrex.caravan.mappers.resolver.CaravanMapperResolver;
 import com.zenthrex.core.entites.caravan.Caravan;
 import com.zenthrex.trivo.dto.CaravanDto;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.NullValueCheckStrategy;
 
 @Mapper(
@@ -12,6 +13,10 @@ import org.mapstruct.NullValueCheckStrategy;
         uses = {
                 DateMapper.class,
                 CaravanMapperResolver.class,
+                CaravanPricingMapper.class,
+                FeaturesMapper.class,
+                CaravanStopSellingMapper.class,
+                CaravanCancellationPolicyMapper.class
         })
 public interface CaravanMapper {
     CaravanDto toDto(Caravan caravan);

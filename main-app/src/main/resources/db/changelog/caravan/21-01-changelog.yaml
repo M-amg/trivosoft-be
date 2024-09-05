@@ -488,7 +488,7 @@ databaseChangeLog:
               - column:
                   name: role
                   type: VARCHAR(50)
-            tableName: user
+            tableName: users
   - changeSet:
       id: 1721601140783-15
       author: amghar
@@ -508,7 +508,7 @@ databaseChangeLog:
                   name: token
                   type: VARCHAR(150)
               - column:
-                  name: tokenType
+                  name: token_type
                   type: VARCHAR(10)
               - column:
                   name: revoked
@@ -632,7 +632,7 @@ databaseChangeLog:
             baseTableName: token
             constraintName: FK_TOKEN_ON_USER
             referencedColumnNames: id
-            referencedTableName: user
+            referencedTableName: users
   - changeSet:
       id: 1721601140783-26
       author: amghar
@@ -643,5 +643,5 @@ databaseChangeLog:
             baseTableName: caravan
             constraintName: FK_CARAVAN_ON_USER
             referencedColumnNames: id
-            referencedTableName: user
+            referencedTableName: users
 

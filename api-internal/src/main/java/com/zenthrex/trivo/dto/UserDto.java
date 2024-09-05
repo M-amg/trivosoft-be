@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.zenthrex.trivo.dto.RoleEnumDto;
 import com.zenthrex.trivo.dto.TokenDto;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -25,9 +24,12 @@ import jakarta.annotation.Generated;
 /**
  * UserDto
  */
+@lombok.NoArgsConstructor
+@lombok.AllArgsConstructor
+@lombok.Builder
 
 @JsonTypeName("User")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-08-03T18:14:38.905050800+01:00[Africa/Casablanca]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-08-17T15:19:41.340718800+01:00[Africa/Casablanca]")
 public class UserDto {
 
   private Integer id;
@@ -47,7 +49,44 @@ public class UserDto {
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private OffsetDateTime createdOn;
 
-  private RoleEnumDto role;
+  /**
+   * Gets or Sets role
+   */
+  public enum RoleEnum {
+    BUYER("BUYER"),
+    
+    ADMIN("ADMIN"),
+    
+    SELLER("SELLER");
+
+    private String value;
+
+    RoleEnum(String value) {
+      this.value = value;
+    }
+
+    @JsonValue
+    public String getValue() {
+      return value;
+    }
+
+    @Override
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static RoleEnum fromValue(String value) {
+      for (RoleEnum b : RoleEnum.values()) {
+        if (b.value.equals(value)) {
+          return b;
+        }
+      }
+      throw new IllegalArgumentException("Unexpected value '" + value + "'");
+    }
+  }
+
+  private RoleEnum role;
 
   @Valid
   private List<@Valid TokenDto> tokens;
@@ -212,7 +251,7 @@ public class UserDto {
     this.createdOn = createdOn;
   }
 
-  public UserDto role(RoleEnumDto role) {
+  public UserDto role(RoleEnum role) {
     this.role = role;
     return this;
   }
@@ -221,14 +260,14 @@ public class UserDto {
    * Get role
    * @return role
   */
-  @Valid 
-  @Schema(name = "role", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  
+  @Schema(name = "role", example = "ADMIN", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("role")
-  public RoleEnumDto getRole() {
+  public RoleEnum getRole() {
     return role;
   }
 
-  public void setRole(RoleEnumDto role) {
+  public void setRole(RoleEnum role) {
     this.role = role;
   }
 

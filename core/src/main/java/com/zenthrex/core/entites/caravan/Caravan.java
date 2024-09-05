@@ -45,7 +45,7 @@ public class Caravan {
     @OneToMany(mappedBy = "caravan", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CaravanPricing> caravanPrices;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "caravan_features",
             joinColumns = @JoinColumn(name = "caravan_id"),

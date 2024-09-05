@@ -30,7 +30,6 @@ public class AuthenticationController {
   @CrossOrigin("*")
   public ResponseEntity<AuthenticationResponse> authenticate(
       @RequestBody AuthenticationRequest request) {
-    log.info("request to login {}", request);
     return ResponseEntity.ok(service.authenticate(request));
   }
 

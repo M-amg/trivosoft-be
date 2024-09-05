@@ -1,5 +1,13 @@
 
 components:
+  parameters:
+    caravanId:
+      name: id
+      in: path
+      required: true
+      description: caravan ID
+      schema:
+        type: integer
   schemas:
     Caravan:
       type: object

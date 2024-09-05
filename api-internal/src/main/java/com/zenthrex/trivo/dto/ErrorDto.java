@@ -17,9 +17,12 @@ import jakarta.annotation.Generated;
 /**
  * ErrorDto
  */
+@lombok.NoArgsConstructor
+@lombok.AllArgsConstructor
+@lombok.Builder
 
 @JsonTypeName("Error")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-08-03T18:14:38.905050800+01:00[Africa/Casablanca]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-08-17T15:19:41.340718800+01:00[Africa/Casablanca]")
 public class ErrorDto {
 
   private Integer code;

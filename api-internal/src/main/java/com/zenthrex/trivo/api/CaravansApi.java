@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-08-03T18:14:38.905050800+01:00[Africa/Casablanca]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-08-17T15:19:41.340718800+01:00[Africa/Casablanca]")
 @Validated
 @Tag(name = "caravans", description = "the caravans API")
 public interface CaravansApi {
@@ -43,7 +43,7 @@ public interface CaravansApi {
     }
 
     /**
-     * POST /api/v1/caravans : create new caravan
+     * POST /api/v1/sellers/caravans : create new caravan
      * create new caravan
      *
      * @param caravanDto  (required)
@@ -64,12 +64,168 @@ public interface CaravansApi {
     )
     @RequestMapping(
         method = RequestMethod.POST,
-        value = "/api/v1/caravans",
+        value = "/api/v1/sellers/caravans",
         produces = { "application/json" },
         consumes = { "application/json" }
     )
     
     default ResponseEntity<Void> createCaravan(
+        @Parameter(name = "CaravanDto", description = "", required = true) @Valid @RequestBody CaravanDto caravanDto
+    ) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    /**
+     * GET /api/v1/sellers/caravans/{id} : get caravan by id
+     * get caravan by id
+     *
+     * @param id caravan ID (required)
+     * @return success (status code 200)
+     *         or error (status code 200)
+     */
+    @Operation(
+        operationId = "getCaravan",
+        summary = "get caravan by id",
+        description = "get caravan by id",
+        tags = { "caravans" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "success", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = CaravanDto.class))
+            }),
+            @ApiResponse(responseCode = "default", description = "error", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))
+            })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/api/v1/sellers/caravans/{id}",
+        produces = { "application/json" }
+    )
+    
+    default ResponseEntity<CaravanDto> getCaravan(
+        @Parameter(name = "id", description = "caravan ID", required = true, in = ParameterIn.PATH) @PathVariable("id") Integer id
+    ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"canMove\" : true, \"isImmediatelyBooked\" : false, \"originalPrice\" : 30000.0, \"year\" : 2021, \"stopSells\" : [ { \"reason\" : \"Maintenance\", \"id\" : 1, \"day\" : \"2024-07-22T00:00:00.000+00:00\" }, { \"reason\" : \"Maintenance\", \"id\" : 1, \"day\" : \"2024-07-22T00:00:00.000+00:00\" } ], \"latitude\" : 34.052235, \"assuranceAmount\" : 500.0, \"description\" : \"A luxury caravan with all modern amenities.\", \"weight\" : 1500.0, \"cancellationPolicies\" : [ { \"penalty\" : 100.0, \"penaltyType\" : \"FIXED\", \"description\" : \"Cancellation policy description\", \"id\" : 1, \"daysBefore\" : 30 }, { \"penalty\" : 100.0, \"penaltyType\" : \"FIXED\", \"description\" : \"Cancellation policy description\", \"id\" : 1, \"daysBefore\" : 30 } ], \"title\" : \"Luxury Caravan\", \"caravanPrices\" : [ { \"defaultPrice\" : 450.0, \"limitKM\" : 1000.0, \"price\" : 500.0, \"days\" : 7, \"id\" : 1, \"weekEndSupp\" : 50.0, \"kmPricing\" : 0.5 }, { \"defaultPrice\" : 450.0, \"limitKM\" : 1000.0, \"price\" : 500.0, \"days\" : 7, \"id\" : 1, \"weekEndSupp\" : 50.0, \"kmPricing\" : 0.5 } ], \"numberBed\" : 4, \"features\" : [ { \"entities\" : [ \"entity1\", \"entity1\" ], \"icon\" : \"ac_icon.png\", \"id\" : 1, \"title\" : \"Air Conditioning\", \"type\" : \"INTERIOR\" }, { \"entities\" : [ \"entity1\", \"entity1\" ], \"icon\" : \"ac_icon.png\", \"id\" : 1, \"title\" : \"Air Conditioning\", \"type\" : \"INTERIOR\" } ], \"vin\" : \"1HGCM82633A123456\", \"model\" : \"ModelX\", \"id\" : 1, \"category\" : \"MEDIUM\", \"brand\" : \"CaravanBrand\", \"user\" : { \"firstname\" : \"John\", \"password\" : \"password123\", \"role\" : \"ADMIN\", \"phone\" : \"+1234567890\", \"tokens\" : [ { \"expired\" : false, \"id\" : 1, \"tokenType\" : \"BEARER\", \"revoked\" : false, \"token\" : \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\" }, { \"expired\" : false, \"id\" : 1, \"tokenType\" : \"BEARER\", \"revoked\" : false, \"token\" : \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\" } ], \"id\" : 1, \"createdOn\" : \"2024-07-25T12:34:56Z\", \"email\" : \"john.doe@example.com\", \"lastname\" : \"Doe\", \"status\" : \"ACTIVE\" }, \"height\" : 3.5, \"status\" : \"AVAILABLE\", \"longitude\" : -118.243683 }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    /**
+     * GET /api/v1/sellers/caravans : list of caravan
+     * list of caravans
+     *
+     * @return success (status code 200)
+     *         or error (status code 200)
+     */
+    @Operation(
+        operationId = "getCaravans",
+        summary = "list of caravan",
+        description = "list of caravans",
+        tags = { "caravans" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "success", content = {
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CaravanDto.class)))
+            }),
+            @ApiResponse(responseCode = "default", description = "error", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))
+            })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/api/v1/sellers/caravans",
+        produces = { "application/json" }
+    )
+    
+    default ResponseEntity<List<CaravanDto>> getCaravans(
+        
+    ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "[ { \"canMove\" : true, \"isImmediatelyBooked\" : false, \"originalPrice\" : 30000.0, \"year\" : 2021, \"stopSells\" : [ { \"reason\" : \"Maintenance\", \"id\" : 1, \"day\" : \"2024-07-22T00:00:00.000+00:00\" }, { \"reason\" : \"Maintenance\", \"id\" : 1, \"day\" : \"2024-07-22T00:00:00.000+00:00\" } ], \"latitude\" : 34.052235, \"assuranceAmount\" : 500.0, \"description\" : \"A luxury caravan with all modern amenities.\", \"weight\" : 1500.0, \"cancellationPolicies\" : [ { \"penalty\" : 100.0, \"penaltyType\" : \"FIXED\", \"description\" : \"Cancellation policy description\", \"id\" : 1, \"daysBefore\" : 30 }, { \"penalty\" : 100.0, \"penaltyType\" : \"FIXED\", \"description\" : \"Cancellation policy description\", \"id\" : 1, \"daysBefore\" : 30 } ], \"title\" : \"Luxury Caravan\", \"caravanPrices\" : [ { \"defaultPrice\" : 450.0, \"limitKM\" : 1000.0, \"price\" : 500.0, \"days\" : 7, \"id\" : 1, \"weekEndSupp\" : 50.0, \"kmPricing\" : 0.5 }, { \"defaultPrice\" : 450.0, \"limitKM\" : 1000.0, \"price\" : 500.0, \"days\" : 7, \"id\" : 1, \"weekEndSupp\" : 50.0, \"kmPricing\" : 0.5 } ], \"numberBed\" : 4, \"features\" : [ { \"entities\" : [ \"entity1\", \"entity1\" ], \"icon\" : \"ac_icon.png\", \"id\" : 1, \"title\" : \"Air Conditioning\", \"type\" : \"INTERIOR\" }, { \"entities\" : [ \"entity1\", \"entity1\" ], \"icon\" : \"ac_icon.png\", \"id\" : 1, \"title\" : \"Air Conditioning\", \"type\" : \"INTERIOR\" } ], \"vin\" : \"1HGCM82633A123456\", \"model\" : \"ModelX\", \"id\" : 1, \"category\" : \"MEDIUM\", \"brand\" : \"CaravanBrand\", \"user\" : { \"firstname\" : \"John\", \"password\" : \"password123\", \"role\" : \"ADMIN\", \"phone\" : \"+1234567890\", \"tokens\" : [ { \"expired\" : false, \"id\" : 1, \"tokenType\" : \"BEARER\", \"revoked\" : false, \"token\" : \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\" }, { \"expired\" : false, \"id\" : 1, \"tokenType\" : \"BEARER\", \"revoked\" : false, \"token\" : \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\" } ], \"id\" : 1, \"createdOn\" : \"2024-07-25T12:34:56Z\", \"email\" : \"john.doe@example.com\", \"lastname\" : \"Doe\", \"status\" : \"ACTIVE\" }, \"height\" : 3.5, \"status\" : \"AVAILABLE\", \"longitude\" : -118.243683 }, { \"canMove\" : true, \"isImmediatelyBooked\" : false, \"originalPrice\" : 30000.0, \"year\" : 2021, \"stopSells\" : [ { \"reason\" : \"Maintenance\", \"id\" : 1, \"day\" : \"2024-07-22T00:00:00.000+00:00\" }, { \"reason\" : \"Maintenance\", \"id\" : 1, \"day\" : \"2024-07-22T00:00:00.000+00:00\" } ], \"latitude\" : 34.052235, \"assuranceAmount\" : 500.0, \"description\" : \"A luxury caravan with all modern amenities.\", \"weight\" : 1500.0, \"cancellationPolicies\" : [ { \"penalty\" : 100.0, \"penaltyType\" : \"FIXED\", \"description\" : \"Cancellation policy description\", \"id\" : 1, \"daysBefore\" : 30 }, { \"penalty\" : 100.0, \"penaltyType\" : \"FIXED\", \"description\" : \"Cancellation policy description\", \"id\" : 1, \"daysBefore\" : 30 } ], \"title\" : \"Luxury Caravan\", \"caravanPrices\" : [ { \"defaultPrice\" : 450.0, \"limitKM\" : 1000.0, \"price\" : 500.0, \"days\" : 7, \"id\" : 1, \"weekEndSupp\" : 50.0, \"kmPricing\" : 0.5 }, { \"defaultPrice\" : 450.0, \"limitKM\" : 1000.0, \"price\" : 500.0, \"days\" : 7, \"id\" : 1, \"weekEndSupp\" : 50.0, \"kmPricing\" : 0.5 } ], \"numberBed\" : 4, \"features\" : [ { \"entities\" : [ \"entity1\", \"entity1\" ], \"icon\" : \"ac_icon.png\", \"id\" : 1, \"title\" : \"Air Conditioning\", \"type\" : \"INTERIOR\" }, { \"entities\" : [ \"entity1\", \"entity1\" ], \"icon\" : \"ac_icon.png\", \"id\" : 1, \"title\" : \"Air Conditioning\", \"type\" : \"INTERIOR\" } ], \"vin\" : \"1HGCM82633A123456\", \"model\" : \"ModelX\", \"id\" : 1, \"category\" : \"MEDIUM\", \"brand\" : \"CaravanBrand\", \"user\" : { \"firstname\" : \"John\", \"password\" : \"password123\", \"role\" : \"ADMIN\", \"phone\" : \"+1234567890\", \"tokens\" : [ { \"expired\" : false, \"id\" : 1, \"tokenType\" : \"BEARER\", \"revoked\" : false, \"token\" : \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\" }, { \"expired\" : false, \"id\" : 1, \"tokenType\" : \"BEARER\", \"revoked\" : false, \"token\" : \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\" } ], \"id\" : 1, \"createdOn\" : \"2024-07-25T12:34:56Z\", \"email\" : \"john.doe@example.com\", \"lastname\" : \"Doe\", \"status\" : \"ACTIVE\" }, \"height\" : 3.5, \"status\" : \"AVAILABLE\", \"longitude\" : -118.243683 } ]";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    /**
+     * DELETE /api/v1/sellers/caravans/{id} : Remove a caravan
+     *
+     * @param id caravan ID (required)
+     * @return success (status code 200)
+     *         or error (status code 200)
+     */
+    @Operation(
+        operationId = "removeCaravan",
+        summary = "Remove a caravan",
+        tags = { "caravans" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "success"),
+            @ApiResponse(responseCode = "default", description = "error", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))
+            })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.DELETE,
+        value = "/api/v1/sellers/caravans/{id}",
+        produces = { "application/json" }
+    )
+    
+    default ResponseEntity<Void> removeCaravan(
+        @Parameter(name = "id", description = "caravan ID", required = true, in = ParameterIn.PATH) @PathVariable("id") Integer id
+    ) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    /**
+     * PUT /api/v1/sellers/caravans/{id} : Update a caravans
+     *
+     * @param id caravan ID (required)
+     * @param caravanDto  (required)
+     * @return success (status code 200)
+     *         or error (status code 200)
+     */
+    @Operation(
+        operationId = "updateCaravan",
+        summary = "Update a caravans",
+        tags = { "caravans" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "success"),
+            @ApiResponse(responseCode = "default", description = "error", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))
+            })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.PUT,
+        value = "/api/v1/sellers/caravans/{id}",
+        produces = { "application/json" },
+        consumes = { "application/json" }
+    )
+    
+    default ResponseEntity<Void> updateCaravan(
+        @Parameter(name = "id", description = "caravan ID", required = true, in = ParameterIn.PATH) @PathVariable("id") Integer id,
         @Parameter(name = "CaravanDto", description = "", required = true) @Valid @RequestBody CaravanDto caravanDto
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);

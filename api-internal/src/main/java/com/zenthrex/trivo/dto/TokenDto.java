@@ -19,9 +19,12 @@ import jakarta.annotation.Generated;
 /**
  * TokenDto
  */
+@lombok.NoArgsConstructor
+@lombok.AllArgsConstructor
+@lombok.Builder
 
 @JsonTypeName("Token")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-08-03T18:14:38.905050800+01:00[Africa/Casablanca]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-08-17T15:19:41.340718800+01:00[Africa/Casablanca]")
 public class TokenDto {
 
   private Integer id;

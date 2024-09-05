@@ -39,7 +39,10 @@ public class SecurityConfig {
                                 cors.configurationSource(request -> this.corsConfiguration()))
                 .authorizeHttpRequests(
                         auth -> {
-                           // auth.requestMatchers("/api/v1/admin/**").hasRole(ADMIN.name());
+                            auth.requestMatchers("/api/v1/auth/**").permitAll();
+                            auth.requestMatchers("/api/v1/sellers/**").hasAnyRole(SELLER.name(),ADMIN.name());
+                            auth.requestMatchers("/api/v1/admin/**").hasRole(ADMIN.name());
+                            auth.requestMatchers("/api/v1/buyers/**").hasAnyRole(BUYER.name(),SELLER.name(),ADMIN.name());
                             auth.anyRequest().permitAll();
                         })
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -57,6 +60,7 @@ public class SecurityConfig {
     }
 
     private CorsConfiguration corsConfiguration() {
+        // DEFINE AUTHORIZED IP
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("*"));
         configuration.setAllowedHeaders(List.of("*"));

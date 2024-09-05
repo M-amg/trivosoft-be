@@ -10,7 +10,7 @@ import static com.zenthrex.core.enums.Permission.*;
 
 @Getter
 public enum RoleEnum {
-    CUSTODIAN(Collections.emptySet()),
+    BUYER(Collections.emptySet()),
     ADMIN(
             Set.of(
                     ADMIN_READ,
@@ -23,7 +23,7 @@ public enum RoleEnum {
                     USER_CREATE
             )
     ),
-    USER(
+    SELLER(
             Set.of(
                     USER_READ,
                     USER_UPDATE,
