@@ -1,12 +1,12 @@
 package com.zenthrex.caravan.services;
 
+import com.zenthrex.core.dtos.CaravanDto;
 import com.zenthrex.caravan.helpers.CaravanValidationHelper;
 import com.zenthrex.caravan.mappers.CaravanMapper;
 import com.zenthrex.core.entites.User;
 import com.zenthrex.core.entites.caravan.Caravan;
 import com.zenthrex.core.exception.ResourceNotFoundException;
 import com.zenthrex.core.repositories.CaravanRepository;
-import com.zenthrex.trivo.dto.CaravanDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

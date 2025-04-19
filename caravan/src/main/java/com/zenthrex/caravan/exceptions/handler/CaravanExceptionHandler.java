@@ -1,7 +1,7 @@
 package com.zenthrex.caravan.exceptions.handler;
 
 import com.zenthrex.core.exception.ResourceNotFoundException;
-import com.zenthrex.trivo.dto.ErrorDto;
+import com.zenthrex.core.dtos.ErrorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

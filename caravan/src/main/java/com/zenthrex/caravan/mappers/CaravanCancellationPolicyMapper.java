@@ -1,8 +1,8 @@
 package com.zenthrex.caravan.mappers;
 
 
+import com.zenthrex.core.dtos.CaravanStopSellingDto;
 import com.zenthrex.core.entites.caravan.CaravanStopSelling;
-import com.zenthrex.trivo.dto.CaravanStopSellingDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

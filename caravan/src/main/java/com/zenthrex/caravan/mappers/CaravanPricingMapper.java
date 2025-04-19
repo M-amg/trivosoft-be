@@ -1,7 +1,7 @@
 package com.zenthrex.caravan.mappers;
 
+import com.zenthrex.core.dtos.CaravanPricingDto;
 import com.zenthrex.core.entites.caravan.CaravanPricing;
-import com.zenthrex.trivo.dto.CaravanPricingDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

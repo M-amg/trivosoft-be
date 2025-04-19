@@ -1,11 +1,11 @@
 package com.zenthrex.caravan.helpers;
 
 
+import com.zenthrex.core.dtos.CaravanDto;
 import com.zenthrex.caravan.exceptions.CaravanValidationException;
 import com.zenthrex.core.entites.User;
 import com.zenthrex.core.enums.RoleEnum;
 import com.zenthrex.core.repositories.CaravanRepository;
-import com.zenthrex.trivo.dto.CaravanDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Component;
