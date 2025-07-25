@@ -1,10 +1,12 @@
 package com.zenthrex.caravan.services;
 
+import com.zenthrex.caravan.dtos.AvailableCaravanDto;
 import com.zenthrex.core.dtos.CaravanDto;
 import com.zenthrex.caravan.helpers.CaravanValidationHelper;
 import com.zenthrex.caravan.mappers.CaravanMapper;
 import com.zenthrex.core.entites.User;
 import com.zenthrex.core.entites.caravan.Caravan;
+import com.zenthrex.core.entites.caravan.CaravanPricing;
 import com.zenthrex.core.exception.ResourceNotFoundException;
 import com.zenthrex.core.repositories.CaravanRepository;
 import jakarta.transaction.Transactional;
@@ -13,8 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.zenthrex.core.enums.RoleEnum.SELLER;
 
@@ -66,4 +72,45 @@ public class CaravanService {
         caravanDto.setId(id);
         caravanRepository.save(caravanMapper.toEntity(caravanDto));
     }
+
+    public List<AvailableCaravanDto> findAvailableCaravansBetween(LocalDate startDate, LocalDate endDate) {
+        List<Caravan> candidates = caravanRepository.findAvailableCaravansBetween(startDate, endDate);
+        List<AvailableCaravanDto> results = new ArrayList<>();
+
+        for (Caravan caravan : candidates) {
+            double totalPrice = calculateTotalPrice(caravan, startDate, endDate);
+            results.add(AvailableCaravanDto.builder()
+                    .id(caravan.getId())
+                    .title(caravan.getTitle())
+                    .brand(caravan.getBrand())
+                    .model(caravan.getModel())
+                    .numberBed(caravan.getNumberBed())
+                    .totalPrice(totalPrice)
+                    .build());
+        }
+
+        return results;
+    }
+    private double calculateTotalPrice(Caravan caravan, LocalDate start, LocalDate end) {
+        long totalDays = ChronoUnit.DAYS.between(start, end) + 1;
+        double total = 0.0;
+
+        List<CaravanPricing> prices = caravan.getCaravanPrices();
+        Optional<CaravanPricing> pricing = prices.stream()
+                .filter(p -> p.getDays().equals((int) totalDays))
+                .findFirst();
+
+        if (pricing.isPresent()) {
+            return pricing.get().getPrice();
+        } else {
+            // Fallback: use defaultPrice per day
+            double defaultPerDay = prices.stream()
+                    .mapToDouble(CaravanPricing::getDefaultPrice)
+                    .average()
+                    .orElse(100.0); // fallback default
+
+            return totalDays * defaultPerDay;
+        }
+    }
+
 }
