@@ -1,4 +1,4 @@
-package com.zenthrex.caravan.controller.seller;
+package com.zenthrex.caravan.controller;
 
 import com.zenthrex.caravan.controller.api.CaravanApi;
 import com.zenthrex.core.dtos.CaravanDto;
