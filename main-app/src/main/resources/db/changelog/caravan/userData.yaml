@@ -1,0 +1,70 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1721601140783-27
+      author: amghar
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: firstname
+                  value: admin
+              - column:
+                  name: lastname
+                  value: admin
+              - column:
+                  name: phone
+                  value: 0627566326
+              - column:
+                  name: email
+                  value: admin@gmail.com
+              - column:
+                  name: role
+                  value: ADMIN
+              - column:
+                  name: password
+                  value: $2a$10$9S0cGOTycM5ESsGx2jWwG.ZaPUkdsNKYYzpWBJzi5PEQ1P1o.9bbu
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: firstname
+                  value: seller
+              - column:
+                  name: lastname
+                  value: seller
+              - column:
+                  name: phone
+                  value: 0627570346
+              - column:
+                  name: email
+                  value: seller@gmail.com
+              - column:
+                  name: role
+                  value: SELLER
+              - column:
+                  name: password
+                  value: $2a$10$EbSubPbmdIEP5NK/Wq5l.Opbd5VucekB9e0wpbW7IRp7CGPBl9ZDa
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: firstname
+                  value: buyer
+              - column:
+                  name: lastname
+                  value: buyer
+              - column:
+                  name: phone
+                  value: 062765346
+              - column:
+                  name: email
+                  value: buyer@gmail.com
+              - column:
+                  name: role
+                  value: BUYER
+              - column:
+                  name: password
+                  value: $2a$10$6mjn3CQGg794jR45.nQIb.e8SgdQ9dDl4xeW1.cv1jgzf54oSVDMi
