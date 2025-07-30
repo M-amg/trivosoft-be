@@ -28,6 +28,7 @@
         <module>crm</module>
         <module>security</module>
         <module>main-app</module>
+        <module>user</module>
     </modules>
     <scm>
         <connection/>
