@@ -1,0 +1,356 @@
+# main-app/src/main/resources/db/changelog/accessory/accessory-schema.yaml
+databaseChangeLog:
+  - changeSet:
+      id: accessory-tables-001
+      author: system
+      changes:
+        - createTable:
+            tableName: accessories
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: price
+                  type: DECIMAL(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: delivery_price
+                  type: DECIMAL(10,2)
+              - column:
+                  name: category
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: stock_quantity
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: brand
+                  type: VARCHAR(100)
+              - column:
+                  name: model
+                  type: VARCHAR(100)
+              - column:
+                  name: sku
+                  type: VARCHAR(100)
+                  constraints:
+                    unique: true
+              - column:
+                  name: weight
+                  type: DECIMAL(8,2)
+              - column:
+                  name: dimensions
+                  type: VARCHAR(100)
+              - column:
+                  name: color
+                  type: VARCHAR(50)
+              - column:
+                  name: material
+                  type: VARCHAR(100)
+              - column:
+                  name: latitude
+                  type: DECIMAL(10,8)
+              - column:
+                  name: longitude
+                  type: DECIMAL(11,8)
+              - column:
+                  name: created_on
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_on
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: accessory_images
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: accessory_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: image_url
+                  type: VARCHAR(500)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+              - column:
+                  name: display_order
+                  type: INTEGER
+                  defaultValue: 0
+              - column:
+                  name: is_primary
+                  type: BOOLEAN
+                  defaultValue: false
+              - column:
+                  name: created_on
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+        - createTable:
+            tableName: accessory_reviews
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: accessory_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: rating
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+              - column:
+                  name: comment
+                  type: TEXT
+              - column:
+                  name: is_verified_purchase
+                  type: BOOLEAN
+                  defaultValue: false
+              - column:
+                  name: created_on
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+        - createTable:
+            tableName: accessory_orders
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_number
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: customer_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_amount
+                  type: DECIMAL(12,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: delivery_amount
+                  type: DECIMAL(10,2)
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: delivery_address
+                  type: TEXT
+              - column:
+                  name: notes
+                  type: TEXT
+              - column:
+                  name: created_on
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_on
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+        - createTable:
+            tableName: accessory_order_items
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: accessory_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: unit_price
+                  type: DECIMAL(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_price
+                  type: DECIMAL(12,2)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: accessory-foreign-keys-001
+      author: system
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: accessories
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_accessories_user
+
+        - addForeignKeyConstraint:
+            baseTableName: accessory_images
+            baseColumnNames: accessory_id
+            referencedTableName: accessories
+            referencedColumnNames: id
+            constraintName: fk_accessory_images_accessory
+
+        - addForeignKeyConstraint:
+            baseTableName: accessory_reviews
+            baseColumnNames: accessory_id
+            referencedTableName: accessories
+            referencedColumnNames: id
+            constraintName: fk_accessory_reviews_accessory
+
+        - addForeignKeyConstraint:
+            baseTableName: accessory_reviews
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_accessory_reviews_user
+
+        - addForeignKeyConstraint:
+            baseTableName: accessory_orders
+            baseColumnNames: customer_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_accessory_orders_customer
+
+        - addForeignKeyConstraint:
+            baseTableName: accessory_order_items
+            baseColumnNames: order_id
+            referencedTableName: accessory_orders
+            referencedColumnNames: id
+            constraintName: fk_accessory_order_items_order
+
+        - addForeignKeyConstraint:
+            baseTableName: accessory_order_items
+            baseColumnNames: accessory_id
+            referencedTableName: accessories
+            referencedColumnNames: id
+            constraintName: fk_accessory_order_items_accessory
+
+  - changeSet:
+      id: accessory-indexes-001
+      author: system
+      changes:
+        - createIndex:
+            tableName: accessories
+            indexName: idx_accessories_category
+            columns:
+              - column:
+                  name: category
+
+        - createIndex:
+            tableName: accessories
+            indexName: idx_accessories_status
+            columns:
+              - column:
+                  name: status
+
+        - createIndex:
+            tableName: accessories
+            indexName: idx_accessories_price
+            columns:
+              - column:
+                  name: price
+
+        - createIndex:
+            tableName: accessories
+            indexName: idx_accessories_user
+            columns:
+              - column:
+                  name: user_id
+
+        - createIndex:
+            tableName: accessory_reviews
+            indexName: idx_accessory_reviews_rating
+            columns:
+              - column:
+                  name: rating
+
+        - createIndex:
+            tableName: accessory_orders
+            indexName: idx_accessory_orders_customer
+            columns:
+              - column:
+                  name: customer_id
+
+        - createIndex:
+            tableName: accessory_orders
+            indexName: idx_accessory_orders_status
+            columns:
+              - column:
+                  name: status

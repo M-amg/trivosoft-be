@@ -1,5 +1,6 @@
 package com.zenthrex.user.service;
 
+import com.zenthrex.user.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
