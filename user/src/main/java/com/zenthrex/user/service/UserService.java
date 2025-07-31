@@ -5,8 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
 /**
  * User Management Service Interface
  * Defines all user-related business operations following SOA architecture
@@ -195,7 +193,7 @@ public interface UserService {
     /**
      * Request pro upgrade (Standard client only)
      */
-    void requestProUpgrade(ProUpgradeRequest request);
+    void requestProUpgrade(ProUpgradeRequestDto request);
 
     /**
      * Get pro upgrade request status

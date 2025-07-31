@@ -9,6 +9,7 @@ import com.zenthrex.core.enums.AccessoryStatus;
 import com.zenthrex.core.exception.ResourceNotFoundException;
 import com.zenthrex.core.repositories.AccessoryRepository;
 import com.zenthrex.core.repositories.UserRepository;
+import com.zenthrex.notification.services.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

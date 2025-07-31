@@ -35,6 +35,6 @@ public record ProfileVerificationDto(
         LocalDateTime reviewedAt,
 
         @Schema(description = "Reviewed by agent")
-        Long reviewedBy
+        Integer reviewedBy
 ) {
 }

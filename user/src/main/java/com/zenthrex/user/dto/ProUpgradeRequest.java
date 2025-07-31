@@ -7,9 +7,10 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Schema(description = "Pro upgrade request")
-public record ProUpgradeRequest(
+public record ProUpgradeRequestDto(
         @Schema(description = "Business name", example = "John's Caravan Rentals")
         @NotBlank(message = "Business name is required")
+
         @Size(min = 2, max = 100, message = "Business name must be between 2 and 100 characters")
         String businessName,
 

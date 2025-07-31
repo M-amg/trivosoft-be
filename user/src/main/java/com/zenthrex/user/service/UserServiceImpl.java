@@ -1,8 +1,10 @@
 package com.zenthrex.user.service;
 
-import com.zenthrex.core.entites.user.User;
+import com.zenthrex.core.entites.user.*;
+import com.zenthrex.core.enums.*;
 import com.zenthrex.core.exception.ResourceNotFoundException;
-import com.zenthrex.core.repositories.UserRepository;
+import com.zenthrex.core.repositories.*;
+import com.zenthrex.notification.services.NotificationService;
 import com.zenthrex.user.dto.*;
 import com.zenthrex.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -25,6 +29,15 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserActivityRepository userActivityRepository;
+    private final UserNotificationRepository userNotificationRepository;
+    private final NotificationSettingsRepository notificationSettingsRepository;
+    private final PrivacySettingsRepository privacySettingsRepository;
+    private final ProUpgradeRequestRepository proUpgradeRequestRepository;
+    private final ProfileVerificationRepository profileVerificationRepository;
+    private final AgentTaskRepository agentTaskRepository;
+    private final UserNoteRepository userNoteRepository;
+
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final FileUploadService fileUploadService;
@@ -37,7 +50,6 @@ public class UserServiceImpl implements UserService {
     public Page<UserDto> getAllUsers(String role, String status, String search, Pageable pageable) {
         log.info("Admin fetching all users with filters - role: {}, status: {}, search: {}", role, status, search);
 
-        // Implementation would use custom repository methods with specifications
         Page<User> users = userRepository.findAllWithFilters(role, status, search, pageable);
         return users.map(userMapper::toDto);
     }
@@ -59,13 +71,19 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(Math.toIntExact(id))
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        String oldStatus = user.getStatus();
-        user.setStatus(request.status());
+        UserStatus oldStatus = user.getStatus();
+        user.setStatus(UserStatus.valueOf(request.status()));
+        user.setUpdatedOn(LocalDateTime.now());
 
         userRepository.save(user);
 
+        // Log user activity
+        logUserActivity(user, "STATUS_CHANGED",
+                String.format("Status changed from %s to %s. Reason: %s",
+                        oldStatus, request.status(), request.reason()));
+
         // Audit log
-        auditService.logUserStatusChange(id, oldStatus, request.status(), request.reason());
+        auditService.logUserStatusChange(id, oldStatus.name(), request.status(), request.reason());
 
         // Send notification to user
         notificationService.sendStatusChangeNotification(user, request.status(), request.reason());
@@ -78,11 +96,18 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(Math.toIntExact(id))
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // Implementation would update role and permissions
-        // user.setRole(RoleEnum.valueOf(request.role()));
+        RoleEnum oldRole = user.getRole();
+        user.setRole(RoleEnum.valueOf(request.role()));
+        user.setUpdatedOn(LocalDateTime.now());
+
         userRepository.save(user);
 
-        auditService.logUserRoleChange(id, user.getRole().name(), request.role(), request.reason());
+        // Log user activity
+        logUserActivity(user, "ROLE_CHANGED",
+                String.format("Role changed from %s to %s. Reason: %s",
+                        oldRole, request.role(), request.reason()));
+
+        auditService.logUserRoleChange(id, oldRole.name(), request.role(), request.reason());
     }
 
     @Override
@@ -92,8 +117,14 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(Math.toIntExact(id))
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // Soft delete implementation
-        user.setStatus("DELETED");
+        // Prevent deletion of admin users
+        if (user.getRole() == RoleEnum.ADMIN) {
+            throw new IllegalArgumentException("Cannot delete admin users");
+        }
+
+        // Soft delete
+        user.setStatus(UserStatus.DELETED);
+        user.setUpdatedOn(LocalDateTime.now());
         userRepository.save(user);
 
         auditService.logUserDeletion(id, getCurrentUserId());
@@ -114,15 +145,193 @@ public class UserServiceImpl implements UserService {
                 .email(request.email())
                 .phone(request.phone())
                 .password(passwordEncoder.encode(request.password()))
-                .status("ACTIVE")
+                .role(RoleEnum.AGENT)
+                .status(UserStatus.ACTIVE)
+                .profileVerified(true)
+                .verifiedAt(LocalDateTime.now())
+                .verifiedBy(getCurrentUserId())
                 .build();
 
         User savedAgent = userRepository.save(agent);
 
+        // Create default notification settings
+        createDefaultNotificationSettings(savedAgent);
+
         // Send welcome email with temporary password
-        notificationService.sendAgentWelcomeEmail(savedAgent, request.password());
+        notificationService.sendWelcomeEmail(savedAgent, request.password());
 
         return userMapper.toDto(savedAgent);
+    }
+
+    // ==================== AGENT OPERATIONS ====================
+
+    @Override
+    public Page<UserDto> getAllClients(String clientType, String status, String search,
+                                       Boolean verified, Pageable pageable) {
+        log.info("Agent fetching clients - type: {}, status: {}, search: {}, verified: {}",
+                clientType, status, search, verified);
+
+        Page<User> clients = userRepository.findClientsWithFilters(
+                clientType, status, search, verified, pageable);
+
+        return clients.map(userMapper::toDto);
+    }
+
+    @Override
+    public ClientDetailDto getClientDetails(Long id) {
+        log.info("Agent fetching client details for ID: {}", id);
+
+        User user = userRepository.findById(Math.toIntExact(id))
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found"));
+
+        // Validate client role
+        if (user.getRole() != RoleEnum.BUYER && user.getRole() != RoleEnum.SELLER) {
+            throw new IllegalArgumentException("User is not a client");
+        }
+
+        ClientDetailDto clientDetail = userMapper.toClientDetailDto(user);
+
+        // Add computed fields
+        // Note: In real implementation, you'd query actual bookings/orders
+        return new ClientDetailDto(
+                clientDetail.id(),
+                clientDetail.firstName(),
+                clientDetail.lastName(),
+                clientDetail.email(),
+                clientDetail.phone(),
+                user.getRole().name(),
+                user.getStatus().name(),
+                user.getProfileVerified(),
+                user.getAvatarUrl(),
+                0, // totalBookings - compute from booking repository
+                0, // totalOrders - compute from order repository
+                "0.00", // totalSpent - compute from order repository
+                user.getCreatedOn(),
+                user.getLastLoginAt(),
+                getUserNotesCount(user.getId().longValue())
+        );
+    }
+
+    @Override
+    public void verifyClientProfile(Long id, VerifyProfileRequest request) {
+        log.info("Agent verifying client profile: {} - verified: {}", id, request.verified());
+
+        User user = userRepository.findById(Math.toIntExact(id))
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found"));
+
+        user.setProfileVerified(request.verified());
+        user.setVerifiedAt(LocalDateTime.now());
+        user.setVerifiedBy(getCurrentUserId());
+        user.setVerificationNotes(request.notes());
+        user.setUpdatedOn(LocalDateTime.now());
+
+        userRepository.save(user);
+
+        // Log activity
+        logUserActivity(user, "PROFILE_VERIFICATION",
+                String.format("Profile %s by agent. Notes: %s",
+                        request.verified() ? "verified" : "rejected", request.notes()));
+
+        // Send notification
+        notificationService.sendProfileVerificationResult(user, request.verified(), request.notes());
+    }
+
+    @Override
+    public Page<ProfileVerificationDto> getPendingVerifications(Pageable pageable) {
+        log.info("Agent fetching pending profile verifications");
+
+        Page<ProfileVerification> verifications = profileVerificationRepository
+                .findByStatusOrderBySubmittedAtDesc(VerificationStatus.PENDING, pageable);
+
+        return verifications.map(this::mapToProfileVerificationDto);
+    }
+
+    @Override
+    public Page<ProUpgradeRequestDto> getProUpgradeRequests(String status, Pageable pageable) {
+        log.info("Agent fetching pro upgrade requests - status: {}", status);
+
+        RequestStatus requestStatus = status != null ? RequestStatus.valueOf(status) : null;
+        Page<ProUpgradeRequest> requests;
+
+        if (requestStatus != null) {
+            requests = proUpgradeRequestRepository.findByStatusOrderByCreatedAtDesc(requestStatus, pageable);
+        } else {
+            requests = proUpgradeRequestRepository.findAllByOrderByCreatedAtDesc(pageable);
+        }
+
+        return requests.map(this::mapToProUpgradeRequestDto);
+    }
+
+    @Override
+    public ProUpgradeRequestDetailDto getProUpgradeRequestDetails(Long id) {
+        log.info("Agent fetching pro upgrade request details for ID: {}", id);
+
+        ProUpgradeRequest request = proUpgradeRequestRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pro upgrade request not found"));
+
+        return mapToProUpgradeRequestDetailDto(request);
+    }
+
+    @Override
+    public void approveProUpgrade(Long id, ApproveProUpgradeRequest request) {
+        log.info("Agent approving pro upgrade request: {}", id);
+
+        ProUpgradeRequest upgradeRequest = proUpgradeRequestRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pro upgrade request not found"));
+
+        if (upgradeRequest.getStatus() != RequestStatus.PENDING) {
+            throw new IllegalStateException("Request has already been processed");
+        }
+
+        // Update request
+        upgradeRequest.setStatus(RequestStatus.APPROVED);
+        upgradeRequest.setProcessedAt(LocalDateTime.now());
+        upgradeRequest.setProcessedBy(getCurrentUserId());
+        upgradeRequest.setProcessingNotes(request.notes());
+
+        // Upgrade user role
+        User user = upgradeRequest.getUser();
+        user.setRole(RoleEnum.SELLER);
+        user.setBusinessName(upgradeRequest.getBusinessName());
+        user.setBusinessType(upgradeRequest.getBusinessType());
+        user.setTaxId(upgradeRequest.getTaxId());
+        user.setBusinessAddress(upgradeRequest.getBusinessAddress());
+        user.setBusinessPhone(upgradeRequest.getBusinessPhone());
+        user.setWebsite(upgradeRequest.getWebsite());
+        user.setUpdatedOn(LocalDateTime.now());
+
+        proUpgradeRequestRepository.save(upgradeRequest);
+        userRepository.save(user);
+
+        // Log activity
+        logUserActivity(user, "PRO_UPGRADE_APPROVED",
+                "Account upgraded to Pro status. Notes: " + request.notes());
+
+        // Send notification
+        notificationService.sendProUpgradeResult(user, true, request.notes());
+    }
+
+    @Override
+    public void rejectProUpgrade(Long id, RejectProUpgradeRequest request) {
+        log.info("Agent rejecting pro upgrade request: {} - reason: {}", id, request.reason());
+
+        ProUpgradeRequest upgradeRequest = proUpgradeRequestRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pro upgrade request not found"));
+
+        if (upgradeRequest.getStatus() != RequestStatus.PENDING) {
+            throw new IllegalStateException("Request has already been processed");
+        }
+
+        upgradeRequest.setStatus(RequestStatus.REJECTED);
+        upgradeRequest.setProcessedAt(LocalDateTime.now());
+        upgradeRequest.setProcessedBy(getCurrentUserId());
+        upgradeRequest.setProcessingNotes(request.reason() +
+                (request.notes() != null ? ". " + request.notes() : ""));
+
+        proUpgradeRequestRepository.save(upgradeRequest);
+
+        // Send notification
+        notificationService.sendProUpgradeResult(upgradeRequest.getUser(), false, request.reason());
     }
 
     // ==================== CLIENT OPERATIONS ====================
@@ -144,8 +353,17 @@ public class UserServiceImpl implements UserService {
         if (request.firstName() != null) currentUser.setFirstname(request.firstName());
         if (request.lastName() != null) currentUser.setLastname(request.lastName());
         if (request.phone() != null) currentUser.setPhone(request.phone());
+        if (request.dateOfBirth() != null) currentUser.setDateOfBirth(request.dateOfBirth());
+        if (request.address() != null) currentUser.setAddress(request.address());
+        if (request.city() != null) currentUser.setCity(request.city());
+        if (request.country() != null) currentUser.setCountry(request.country());
+
+        currentUser.setUpdatedOn(LocalDateTime.now());
 
         User updatedUser = userRepository.save(currentUser);
+
+        // Log activity
+        logUserActivity(currentUser, "PROFILE_UPDATED", "User updated their profile information");
 
         auditService.logProfileUpdate(currentUser.getId());
 
@@ -168,180 +386,115 @@ public class UserServiceImpl implements UserService {
         }
 
         currentUser.setPassword(passwordEncoder.encode(request.newPassword()));
+        currentUser.setUpdatedOn(LocalDateTime.now());
         userRepository.save(currentUser);
+
+        // Log activity
+        logUserActivity(currentUser, "PASSWORD_CHANGED", "User changed their password");
 
         auditService.logPasswordChange(currentUser.getId());
         notificationService.sendPasswordChangeConfirmation(currentUser);
     }
 
     @Override
-    public AvatarUploadResponseDto uploadAvatar(MultipartFile file) {
-        User currentUser = getCurrentUser();
-        log.info("Uploading avatar for user: {}", currentUser.getEmail());
-
-        // Validate file
-        validateImageFile(file);
-
-        // Upload file and get URL
-        String avatarUrl = fileUploadService.uploadAvatar(file, currentUser.getId());
-
-        // Update user avatar URL (assuming we add this field to User entity)
-        // currentUser.setAvatarUrl(avatarUrl);
-        userRepository.save(currentUser);
-
-        return new AvatarUploadResponseDto(avatarUrl, LocalDateTime.now());
-    }
-
-    @Override
-    public void deleteAvatar() {
-        User currentUser = getCurrentUser();
-        log.info("Deleting avatar for user: {}", currentUser.getEmail());
-
-        // Remove avatar URL and delete file
-        fileUploadService.deleteAvatar(currentUser.getId());
-        // currentUser.setAvatarUrl(null);
-        userRepository.save(currentUser);
-    }
-
-    @Override
-    public ProfileVerificationStatusDto getVerificationStatus() {
-        User currentUser = getCurrentUser();
-
-        // Implementation would check verification status
-        // This is a placeholder - you'd implement based on your verification system
-        return new ProfileVerificationStatusDto(
-                false, // isVerified
-                "BASIC", // verificationLevel
-                null, // verifiedAt
-                List.of(), // requiredDocuments
-                List.of(), // submittedDocuments
-                false, // hasPendingVerification
-                null // verificationNotes
-        );
-    }
-
-    @Override
-    public void submitProfileVerification(SubmitVerificationRequest request) {
-        User currentUser = getCurrentUser();
-        log.info("Submitting profile verification for user: {}", currentUser.getEmail());
-
-        // Implementation would create verification request
-        // This would involve document validation, creating verification records, etc.
-
-        auditService.logVerificationSubmission(currentUser.getId(), request.verificationType());
-        notificationService.sendVerificationSubmissionConfirmation(currentUser);
-    }
-
-    @Override
-    public void requestProUpgrade(ProUpgradeRequest request) {
-        User currentUser = getCurrentUser();
-        log.info("Processing pro upgrade request for user: {}", currentUser.getEmail());
-
-        // Validate user is eligible (standard client)
-        // if (!currentUser.getRole().equals(RoleEnum.BUYER)) {
-        //     throw new IllegalArgumentException("Only standard clients can request pro upgrade");
-        // }
-
-        // Create pro upgrade request record
-        // Implementation would store business information and create approval workflow
-
-        auditService.logProUpgradeRequest(currentUser.getId());
-        notificationService.sendProUpgradeRequestConfirmation(currentUser);
-    }
-
-    @Override
-    public ProUpgradeStatusDto getProUpgradeStatus() {
-        return null;
-    }
-
-    @Override
-    public ClientDashboardStatsDto getDashboardStats(String period) {
-        return null;
-    }
-
-    @Override
     public Page<NotificationDto> getUserNotifications(String type, Boolean isRead, Pageable pageable) {
-        return null;
+        User currentUser = getCurrentUser();
+        log.info("Client fetching notifications - type: {}, isRead: {}", type, isRead);
+
+        NotificationType notificationType = type != null ? NotificationType.valueOf(type) : null;
+        Page<UserNotification> notifications = userNotificationRepository
+                .findUserNotificationsWithFilters(currentUser, notificationType, isRead, pageable);
+
+        return notifications.map(this::mapToNotificationDto);
     }
 
     @Override
     public void markNotificationAsRead(Long notificationId) {
+        User currentUser = getCurrentUser();
+        log.info("Client marking notification {} as read", notificationId);
 
+        int updated = userNotificationRepository.markAsRead(notificationId, currentUser, LocalDateTime.now());
+        if (updated == 0) {
+            throw new ResourceNotFoundException("Notification not found or doesn't belong to user");
+        }
     }
 
     @Override
     public NotificationSettingsDto getNotificationSettings() {
-        return null;
+        User currentUser = getCurrentUser();
+        log.info("Client fetching notification settings");
+
+        NotificationSettings settings = notificationSettingsRepository.findByUser(currentUser)
+                .orElseGet(() -> createDefaultNotificationSettings(currentUser));
+
+        return mapToNotificationSettingsDto(settings);
     }
 
     @Override
     public NotificationSettingsDto updateNotificationSettings(UpdateNotificationSettingsRequest request) {
-        return null;
+        User currentUser = getCurrentUser();
+        log.info("Client updating notification settings");
+
+        NotificationSettings settings = notificationSettingsRepository.findByUser(currentUser)
+                .orElseGet(() -> createDefaultNotificationSettings(currentUser));
+
+        // Update settings
+        if (request.emailNotifications() != null) settings.setEmailNotifications(request.emailNotifications());
+        if (request.smsNotifications() != null) settings.setSmsNotifications(request.smsNotifications());
+        if (request.pushNotifications() != null) settings.setPushNotifications(request.pushNotifications());
+        if (request.marketingEmails() != null) settings.setMarketingEmails(request.marketingEmails());
+        if (request.typePreferences() != null) settings.setTypePreferences(request.typePreferences());
+        if (request.frequency() != null) settings.setFrequency(NotificationFrequency.valueOf(request.frequency()));
+        if (request.quietHoursStart() != null) settings.setQuietHoursStart(request.quietHoursStart());
+        if (request.quietHoursEnd() != null) settings.setQuietHoursEnd(request.quietHoursEnd());
+
+        settings.setUpdatedAt(LocalDateTime.now());
+
+        NotificationSettings updated = notificationSettingsRepository.save(settings);
+        return mapToNotificationSettingsDto(updated);
     }
 
     @Override
-    public Page<UserActivityDto> getAccountActivity(String activityType, String dateFrom, String dateTo, Pageable pageable) {
-        return null;
-    }
+    public void requestProUpgrade(ProUpgradeRequestDto request) {
+        User currentUser = getCurrentUser();
+        log.info("Processing pro upgrade request for user: {}", currentUser.getEmail());
 
-    @Override
-    public PrivacySettingsDto updatePrivacySettings(UpdatePrivacySettingsRequest request) {
-        return null;
-    }
+        // Validate user is eligible (standard client)
+        if (currentUser.getRole() != RoleEnum.BUYER) {
+            throw new IllegalArgumentException("Only standard clients can request pro upgrade");
+        }
 
-    @Override
-    public PrivacySettingsDto getPrivacySettings() {
-        return null;
-    }
+        // Check if user already has pending request
+        List<RequestStatus> pendingStatuses = Arrays.asList(RequestStatus.PENDING, RequestStatus.IN_REVIEW);
+        if (proUpgradeRequestRepository.existsByUserAndStatusIn(currentUser, pendingStatuses)) {
+            throw new IllegalArgumentException("You already have a pending pro upgrade request");
+        }
 
-    @Override
-    public void requestAccountDeletion(DeleteAccountRequest request) {
+        // Create pro upgrade request
+        ProUpgradeRequest upgradeRequest = ProUpgradeRequest.builder()
+                .user(currentUser)
+                .businessName(request.businessName())
+                .businessType(request.businessType())
+                .taxId(request.taxId())
+                .businessAddress(request.businessAddress())
+                .businessPhone(request.businessPhone())
+                .website(request.website())
+                .yearsOfExperience(request.yearsOfExperience())
+                .reason(request.reason())
+                .status(RequestStatus.PENDING)
+                .build();
 
-    }
+        proUpgradeRequestRepository.save(upgradeRequest);
 
-    @Override
-    public byte[] exportPersonalData(String format) {
-        return new byte[0];
-    }
+        // Log activity
+        logUserActivity(currentUser, "PRO_UPGRADE_REQUESTED",
+                "User requested pro upgrade. Business: " + request.businessName());
 
-    @Override
-    public TwoFactorStatusDto getTwoFactorStatus() {
-        return null;
-    }
-
-    @Override
-    public TwoFactorSetupDto enableTwoFactor() {
-        return null;
-    }
-
-    @Override
-    public void confirmTwoFactor(ConfirmTwoFactorRequest request) {
-
-    }
-
-    @Override
-    public void disableTwoFactor(DisableTwoFactorRequest request) {
-
-    }
-
-    @Override
-    public BackupCodesDto generateBackupCodes() {
-        return null;
-    }
-
-    @Override
-    public Page<UserSessionDto> getConnectedSessions(Pageable pageable) {
-        return null;
-    }
-
-    @Override
-    public void revokeSession(String sessionId) {
-
-    }
-
-    @Override
-    public void revokeAllSessions() {
-
+        auditService.logProUpgradeRequest(currentUser.getId());
+        notificationService.createInAppNotification(currentUser,
+                "Pro Upgrade Request Submitted",
+                "Your pro upgrade request has been submitted and is under review",
+                "UPGRADE");
     }
 
     // ==================== HELPER METHODS ====================
@@ -356,127 +509,292 @@ public class UserServiceImpl implements UserService {
         return getCurrentUser().getId();
     }
 
-    private void validateImageFile(MultipartFile file) {
-        if (file.isEmpty()) {
-            throw new IllegalArgumentException("File is empty");
-        }
+    private void logUserActivity(User user, String activityType, String description) {
+        UserActivity activity = UserActivity.builder()
+                .user(user)
+                .activityType(activityType)
+                .description(description)
+                .ipAddress("127.0.0.1") // Get from request context in real implementation
+                .userAgent("System") // Get from request context
+                .metadata(new HashMap<>())
+                .build();
 
-        if (file.getSize() > 5 * 1024 * 1024) { // 5MB limit
-            throw new IllegalArgumentException("File size exceeds 5MB limit");
-        }
+        userActivityRepository.save(activity);
+    }
 
-        String contentType = file.getContentType();
-        if (contentType == null || (!contentType.startsWith("image/"))) {
-            throw new IllegalArgumentException("File must be an image");
-        }
+    private NotificationSettings createDefaultNotificationSettings(User user) {
+        NotificationSettings settings = NotificationSettings.builder()
+                .user(user)
+                .emailNotifications(true)
+                .smsNotifications(false)
+                .pushNotifications(true)
+                .marketingEmails(true)
+                .frequency(NotificationFrequency.INSTANT)
+                .build();
+
+        return notificationSettingsRepository.save(settings);
+    }
+
+    private Integer getUserNotesCount(Long userId) {
+        User user = userRepository.findById(Math.toIntExact(userId))
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return Math.toIntExact(userNoteRepository.countByUser(user));
+    }
+
+    // ==================== MAPPING METHODS ====================
+
+    private ProfileVerificationDto mapToProfileVerificationDto(ProfileVerification verification) {
+        return new ProfileVerificationDto(
+                verification.getId(),
+                userMapper.toDto(verification.getUser()),
+                verification.getVerificationType().name(),
+                verification.getStatus().name(),
+                List.of(), // documents - implement when document management is ready
+                verification.getNotes(),
+                verification.getSubmittedAt(),
+                verification.getReviewedAt(),
+                verification.getReviewedBy()
+        );
+    }
+
+    private ProUpgradeRequestDto mapToProUpgradeRequestDto(ProUpgradeRequest request) {
+        return new ProUpgradeRequestDto(
+                request.getId(),
+                userMapper.toDto(request.getUser()),
+                request.getBusinessName(),
+                request.getBusinessType(),
+                request.getTaxId(),
+                request.getBusinessAddress(),
+                request.getBusinessPhone(),
+                request.getWebsite(),
+                request.getYearsOfExperience(),
+                request.getReason(),
+                request.getStatus().name(),
+                request.getProcessingNotes(),
+                request.getCreatedAt(),
+                request.getProcessedAt(),
+                request.getProcessedBy()
+        );
+    }
+
+    private ProUpgradeRequestDetailDto mapToProUpgradeRequestDetailDto(ProUpgradeRequest request) {
+        ClientDetailDto userDetail = getClientDetails(request.getUser().getId().longValue());
+
+        BusinessInfoDto businessInfo = new BusinessInfoDto(
+                request.getBusinessName(),
+                request.getBusinessType(),
+                request.getTaxId(),
+                request.getBusinessAddress(),
+                request.getBusinessPhone(),
+                request.getWebsite(),
+                request.getYearsOfExperience()
+        );
+
+        return new ProUpgradeRequestDetailDto(
+                request.getId(),
+                userDetail,
+                businessInfo,
+                request.getStatus().name(),
+                request.getProcessingNotes(),
+                List.of(), // documents
+                List.of(), // timeline
+                request.getCreatedAt(),
+                request.getProcessedAt(),
+                request.getProcessedBy() != null ?
+                        userMapper.toDto(userRepository.findById(request.getProcessedBy()).orElse(null)) : null
+        );
+    }
+
+    private NotificationDto mapToNotificationDto(UserNotification notification) {
+        return new NotificationDto(
+                notification.getId(),
+                notification.getTitle(),
+                notification.getMessage(),
+                notification.getNotificationType().name(),
+                notification.getPriority().name(),
+                notification.getIsRead(),
+                notification.getActionUrl(),
+                notification.getMetadata(),
+                notification.getCreatedAt(),
+                notification.getReadAt()
+        );
+    }
+
+    private NotificationSettingsDto mapToNotificationSettingsDto(NotificationSettings settings) {
+        return new NotificationSettingsDto(
+                settings.getEmailNotifications(),
+                settings.getSmsNotifications(),
+                settings.getPushNotifications(),
+                settings.getMarketingEmails(),
+                settings.getTypePreferences(),
+                settings.getFrequency().name(),
+                settings.getQuietHoursStart(),
+                settings.getQuietHoursEnd()
+        );
     }
 
     // ==================== PLACEHOLDER IMPLEMENTATIONS ====================
-    // These methods need to be implemented based on your specific requirements
+    // These methods will be implemented in subsequent phases
 
     @Override
-    public Page<UserDto> searchUsers(String query, String role, String status, String registeredFrom, String registeredTo, Pageable pageable) {
-        throw new UnsupportedOperationException("Search users not yet implemented");
+    public Page<UserDto> searchUsers(String query, String role, String status,
+                                     String registeredFrom, String registeredTo, Pageable pageable) {
+        throw new UnsupportedOperationException("Advanced search not yet implemented - Phase 2");
     }
 
     @Override
     public UserStatisticsDto getUserStatistics(String period) {
-        throw new UnsupportedOperationException("User statistics not yet implemented");
+        throw new UnsupportedOperationException("User statistics implementation - Phase 2 Dashboard module");
     }
 
     @Override
     public byte[] exportUsers(String format, String role, String status) {
-        throw new UnsupportedOperationException("Export users not yet implemented");
+        throw new UnsupportedOperationException("Export functionality - Phase 2 Dashboard module");
     }
 
     @Override
     public BulkUpdateResultDto bulkUpdateUsers(BulkUpdateUsersRequest request) {
-        throw new UnsupportedOperationException("Bulk update users not yet implemented");
-    }
-
-    @Override
-    public Page<UserDto> getAllClients(String clientType, String status, String search, Boolean verified, Pageable pageable) {
-        return null;
-    }
-
-    @Override
-    public ClientDetailDto getClientDetails(Long id) {
-        return null;
-    }
-
-    @Override
-    public void verifyClientProfile(Long id, VerifyProfileRequest request) {
-
-    }
-
-    @Override
-    public Page<ProfileVerificationDto> getPendingVerifications(Pageable pageable) {
-        return null;
-    }
-
-    @Override
-    public Page<ProUpgradeRequestDto> getProUpgradeRequests(String status, Pageable pageable) {
-        return null;
-    }
-
-    @Override
-    public ProUpgradeRequestDetailDto getProUpgradeRequestDetails(Long id) {
-        return null;
-    }
-
-    @Override
-    public void approveProUpgrade(Long id, ApproveProUpgradeRequest request) {
-
-    }
-
-    @Override
-    public void rejectProUpgrade(Long id, RejectProUpgradeRequest request) {
-
+        throw new UnsupportedOperationException("Bulk operations - Phase 2");
     }
 
     @Override
     public void suspendClient(Long id, SuspendUserRequest request) {
-
+        throw new UnsupportedOperationException("Suspension workflow - Phase 2");
     }
 
     @Override
     public void reactivateClient(Long id, ReactivateUserRequest request) {
-
+        throw new UnsupportedOperationException("Reactivation workflow - Phase 2");
     }
 
     @Override
     public Page<UserActivityDto> getClientActivity(Long id, String activityType, Pageable pageable) {
-        return null;
+        throw new UnsupportedOperationException("Activity tracking - Phase 2");
     }
 
     @Override
     public UserNoteDto addClientNote(Long id, CreateUserNoteRequest request) {
-        return null;
+        throw new UnsupportedOperationException("Note management - Phase 2");
     }
 
     @Override
     public Page<UserNoteDto> getClientNotes(Long id, Pageable pageable) {
-        return null;
+        throw new UnsupportedOperationException("Note management - Phase 2");
     }
 
     @Override
     public void sendMessageToClient(Long id, SendMessageRequest request) {
-
+        throw new UnsupportedOperationException("Messaging system - Phase 2");
     }
 
     @Override
     public AgentStatisticsDto getAgentStatistics(String period) {
-        return null;
+        throw new UnsupportedOperationException("Agent statistics - Phase 2 Dashboard module");
     }
 
     @Override
     public Page<TaskDto> getAssignedTasks(String status, String priority, Pageable pageable) {
-        return null;
+        throw new UnsupportedOperationException("Task management - Phase 2");
     }
 
     @Override
     public void updateTaskStatus(Long taskId, UpdateTaskStatusRequest request) {
-
+        throw new UnsupportedOperationException("Task management - Phase 2");
     }
 
+    @Override
+    public ProfileVerificationStatusDto getVerificationStatus() {
+        throw new UnsupportedOperationException("Verification status - Phase 2 Validation module");
+    }
+
+    @Override
+    public void submitProfileVerification(SubmitVerificationRequest request) {
+        throw new UnsupportedOperationException("Profile verification - Phase 2 Validation module");
+    }
+
+    @Override
+    public ProUpgradeStatusDto getProUpgradeStatus() {
+        throw new UnsupportedOperationException("Pro upgrade status - Phase 2");
+    }
+
+    @Override
+    public ClientDashboardStatsDto getDashboardStats(String period) {
+        throw new UnsupportedOperationException("Dashboard stats - Phase 2 Dashboard module");
+    }
+
+    @Override
+    public AvatarUploadResponseDto uploadAvatar(MultipartFile file) {
+        throw new UnsupportedOperationException("File upload - Phase 2 File Management module");
+    }
+
+    @Override
+    public void deleteAvatar() {
+        throw new UnsupportedOperationException("File management - Phase 2 File Management module");
+    }
+
+    @Override
+    public Page<UserActivityDto> getAccountActivity(String activityType, String dateFrom,
+                                                    String dateTo, Pageable pageable) {
+        throw new UnsupportedOperationException("Activity tracking - Phase 2");
+    }
+
+    @Override
+    public PrivacySettingsDto updatePrivacySettings(UpdatePrivacySettingsRequest request) {
+        throw new UnsupportedOperationException("Privacy settings - Phase 2");
+    }
+
+    @Override
+    public PrivacySettingsDto getPrivacySettings() {
+        throw new UnsupportedOperationException("Privacy settings - Phase 2");
+    }
+
+    @Override
+    public void requestAccountDeletion(DeleteAccountRequest request) {
+        throw new UnsupportedOperationException("Account deletion - Phase 2");
+    }
+
+    @Override
+    public byte[] exportPersonalData(String format) {
+        throw new UnsupportedOperationException("Data export - Phase 2");
+    }
+
+    @Override
+    public TwoFactorStatusDto getTwoFactorStatus() {
+        throw new UnsupportedOperationException("2FA - Phase 3 Security enhancements");
+    }
+
+    @Override
+    public TwoFactorSetupDto enableTwoFactor() {
+        throw new UnsupportedOperationException("2FA - Phase 3 Security enhancements");
+    }
+
+    @Override
+    public void confirmTwoFactor(ConfirmTwoFactorRequest request) {
+        throw new UnsupportedOperationException("2FA - Phase 3 Security enhancements");
+    }
+
+    @Override
+    public void disableTwoFactor(DisableTwoFactorRequest request) {
+        throw new UnsupportedOperationException("2FA - Phase 3 Security enhancements");
+    }
+
+    @Override
+    public BackupCodesDto generateBackupCodes() {
+        throw new UnsupportedOperationException("2FA - Phase 3 Security enhancements");
+    }
+
+    @Override
+    public Page<UserSessionDto> getConnectedSessions(Pageable pageable) {
+        throw new UnsupportedOperationException("Session management - Phase 3 Security enhancements");
+    }
+
+    @Override
+    public void revokeSession(String sessionId) {
+        throw new UnsupportedOperationException("Session management - Phase 3 Security enhancements");
+    }
+
+    @Override
+    public void revokeAllSessions() {
+        throw new UnsupportedOperationException("Session management - Phase 3 Security enhancements");
+    }
 }

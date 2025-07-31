@@ -11,6 +11,14 @@ import static com.zenthrex.core.enums.Permission.*;
 @Getter
 public enum RoleEnum {
     BUYER(Collections.emptySet()),
+    AGENT(
+            Set.of(
+                    USER_READ,
+                    USER_UPDATE,
+                    USER_DELETE,
+                    USER_CREATE
+            )
+    ),
     ADMIN(
             Set.of(
                     ADMIN_READ,

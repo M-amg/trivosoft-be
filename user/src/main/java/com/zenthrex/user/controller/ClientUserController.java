@@ -71,7 +71,7 @@ public class ClientUserController implements ClientUserApi {
 
     @Override
     @PreAuthorize("hasRole('BUYER')") // Only standard clients can request pro upgrade
-    public ResponseEntity<ApiResponseDto> requestProUpgrade(ProUpgradeRequest request) {
+    public ResponseEntity<ApiResponseDto> requestProUpgrade(ProUpgradeRequestDto request) {
         log.info("Client requesting pro upgrade");
         userService.requestProUpgrade(request);
         return ResponseEntity.ok(new ApiResponseDto("Pro upgrade request submitted successfully"));

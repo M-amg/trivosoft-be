@@ -61,6 +61,6 @@ public record ProUpgradeRequestDto(
         LocalDateTime processedAt,
 
         @Schema(description = "Processed by user ID")
-        Long processedBy
+        Integer processedBy
 ) {
 }

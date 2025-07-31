@@ -170,7 +170,7 @@ public interface ClientUserApi {
     @PostMapping("/request-pro-upgrade")
     ResponseEntity<ApiResponseDto> requestProUpgrade(
             @Parameter(description = "Pro upgrade request", required = true)
-            @Valid @RequestBody ProUpgradeRequest request
+            @Valid @RequestBody ProUpgradeRequestDto request
     );
 
     @Operation(
