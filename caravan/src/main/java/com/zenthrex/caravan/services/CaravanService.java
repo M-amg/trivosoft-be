@@ -4,7 +4,7 @@ import com.zenthrex.caravan.dtos.AvailableCaravanDto;
 import com.zenthrex.core.dtos.CaravanDto;
 import com.zenthrex.caravan.helpers.CaravanValidationHelper;
 import com.zenthrex.caravan.mappers.CaravanMapper;
-import com.zenthrex.core.entites.User;
+import com.zenthrex.core.entites.user.User;
 import com.zenthrex.core.entites.caravan.Caravan;
 import com.zenthrex.core.entites.caravan.CaravanPricing;
 import com.zenthrex.core.exception.ResourceNotFoundException;

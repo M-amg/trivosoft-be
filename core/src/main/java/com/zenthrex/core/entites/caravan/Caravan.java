@@ -1,7 +1,7 @@
 package com.zenthrex.core.entites.caravan;
 
 import com.zenthrex.core.entites.Features;
-import com.zenthrex.core.entites.User;
+import com.zenthrex.core.entites.user.User;
 import com.zenthrex.core.enums.CaravanCategory;
 import com.zenthrex.core.enums.CaravanStatus;
 import jakarta.persistence.*;

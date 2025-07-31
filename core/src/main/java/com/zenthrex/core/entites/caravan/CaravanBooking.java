@@ -1,6 +1,5 @@
 package com.zenthrex.core.entites.caravan;
 
-import com.zenthrex.core.entites.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

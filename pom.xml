@@ -25,6 +25,7 @@
         <module>security</module>
         <module>user</module>
         <module>main-app</module>
+        <module>notification</module>
     </modules>
 
     <properties>

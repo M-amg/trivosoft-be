@@ -3,7 +3,7 @@ package com.zenthrex.accessory.services;
 
 import com.zenthrex.accessory.mappers.AccessoryMapper;
 import com.zenthrex.core.dtos.AccessoryDto;
-import com.zenthrex.core.entites.User;
+import com.zenthrex.core.entites.user.User;
 import com.zenthrex.core.entites.accessory.Accessory;
 import com.zenthrex.core.enums.AccessoryStatus;
 import com.zenthrex.core.exception.ResourceNotFoundException;

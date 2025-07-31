@@ -1,7 +1,7 @@
 package com.zenthrex.security.auditor;
 
 
-import com.zenthrex.core.entites.User;
+import com.zenthrex.core.entites.user.User;
 import com.zenthrex.security.model.Account;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;

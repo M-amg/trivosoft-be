@@ -1,6 +1,6 @@
 package com.zenthrex.core.repositories;
 
-import com.zenthrex.core.entites.User;
+import com.zenthrex.core.entites.user.User;
 import com.zenthrex.core.enums.RoleEnum;
 import com.zenthrex.core.enums.UserStatus;
 import org.springframework.data.domain.Page;

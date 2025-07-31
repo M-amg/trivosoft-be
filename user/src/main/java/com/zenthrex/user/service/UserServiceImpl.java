@@ -1,6 +1,6 @@
 package com.zenthrex.user.service;
 
-import com.zenthrex.core.entites.User;
+import com.zenthrex.core.entites.user.User;
 import com.zenthrex.core.exception.ResourceNotFoundException;
 import com.zenthrex.core.repositories.UserRepository;
 import com.zenthrex.user.dto.*;

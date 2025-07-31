@@ -1,5 +1,13 @@
 package com.zenthrex.crm.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -32,7 +40,7 @@ public class OrderDto {
     private CustomerDto customer;
 
     @Schema(description = "Order items")
-    private List<OrderLineDto> orderLines;
+    private List<ProcurementOrderLineDto> orderLines;
 
     @Schema(description = "Payment information")
     private List<PaymentDto> payments;

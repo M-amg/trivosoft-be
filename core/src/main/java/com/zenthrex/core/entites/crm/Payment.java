@@ -1,7 +1,6 @@
 package com.zenthrex.core.entites.crm;
 
 
-import com.zenthrex.core.entites.User;
 import com.zenthrex.core.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;

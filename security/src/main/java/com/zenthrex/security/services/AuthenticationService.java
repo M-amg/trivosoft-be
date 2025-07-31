@@ -2,7 +2,7 @@ package com.zenthrex.security.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zenthrex.core.entites.Token;
-import com.zenthrex.core.entites.User;
+import com.zenthrex.core.entites.user.User;
 import com.zenthrex.core.exception.ResourceNotFoundException;
 import com.zenthrex.core.repositories.TokenRepository;
 import com.zenthrex.core.repositories.UserRepository;

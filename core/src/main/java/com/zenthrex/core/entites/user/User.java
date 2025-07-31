@@ -1,5 +1,6 @@
-package com.zenthrex.core.entites;
+package com.zenthrex.core.entites.user;
 
+import com.zenthrex.core.entites.Token;
 import com.zenthrex.core.enums.RoleEnum;
 import com.zenthrex.core.enums.UserStatus;
 import jakarta.persistence.*;

@@ -1,6 +1,6 @@
 package com.zenthrex.user.mapper;
 
-import com.zenthrex.core.entites.User;
+import com.zenthrex.core.entites.user.User;
 import com.zenthrex.core.enums.RoleEnum;
 import com.zenthrex.core.enums.UserStatus;
 import com.zenthrex.user.dto.*;

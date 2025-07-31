@@ -18,10 +18,12 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     <dependencies>
+        <!-- Modules existants -->
         <dependency>
             <groupId>com.zenthrex</groupId>
-            <artifactId>caravan</artifactId>
+            <artifactId>core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -29,9 +31,32 @@
             <artifactId>security</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.zenthrex</groupId>
+            <artifactId>caravan</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zenthrex</groupId>
+            <artifactId>accessory</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zenthrex</groupId>
+            <artifactId>user</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zenthrex</groupId>
+            <artifactId>crm</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
 
-
+        <!-- Nouveau module notification -->
+        <dependency>
+            <groupId>com.zenthrex</groupId>
+            <artifactId>notification</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
-
-
 </project>

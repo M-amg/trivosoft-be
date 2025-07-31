@@ -3,7 +3,7 @@ package com.zenthrex.caravan.helpers;
 
 import com.zenthrex.core.dtos.CaravanDto;
 import com.zenthrex.caravan.exceptions.CaravanValidationException;
-import com.zenthrex.core.entites.User;
+import com.zenthrex.core.entites.user.User;
 import com.zenthrex.core.enums.RoleEnum;
 import com.zenthrex.core.repositories.CaravanRepository;
 import lombok.RequiredArgsConstructor;

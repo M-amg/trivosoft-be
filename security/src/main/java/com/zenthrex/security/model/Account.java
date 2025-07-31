@@ -1,6 +1,6 @@
 package com.zenthrex.security.model;
 
-import com.zenthrex.core.entites.User;
+import com.zenthrex.core.entites.user.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;

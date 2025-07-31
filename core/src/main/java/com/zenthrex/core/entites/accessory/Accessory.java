@@ -1,6 +1,6 @@
 package com.zenthrex.core.entites.accessory;
 
-import com.zenthrex.core.entites.User;
+import com.zenthrex.core.entites.user.User;
 import com.zenthrex.core.enums.AccessoryCategory;
 import com.zenthrex.core.enums.AccessoryStatus;
 import jakarta.persistence.*;

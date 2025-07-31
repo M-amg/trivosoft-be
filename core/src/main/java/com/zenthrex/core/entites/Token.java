@@ -2,9 +2,14 @@ package com.zenthrex.core.entites;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.zenthrex.core.entites.user.PrivacySettings;
+import com.zenthrex.core.entites.user.User;
 import com.zenthrex.core.enums.TokenType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
 
 @Entity
 @NoArgsConstructor
@@ -26,4 +31,11 @@ public class Token {
     @JoinColumn(name = "user_id")
     @JsonIgnore
     public User user;
+
+    public static interface PrivacySettingsRepository extends JpaRepository<PrivacySettings, Long> {
+
+        Optional<PrivacySettings> findByUser(User user);
+
+        boolean existsByUser(User user);
+    }
 }
