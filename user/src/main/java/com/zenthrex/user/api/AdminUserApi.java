@@ -1,5 +1,6 @@
 package com.zenthrex.user.api;
 
+import com.zenthrex.user.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

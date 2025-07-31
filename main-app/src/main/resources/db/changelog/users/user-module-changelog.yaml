@@ -1,0 +1,565 @@
+# main-app/src/main/resources/db/changelog/user/user-module-changelog.yaml
+databaseChangeLog:
+  - changeSet:
+      id: user-module-001
+      author: system
+      changes:
+        # Add new columns to users table
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: avatar_url
+                  type: VARCHAR(500)
+              - column:
+                  name: date_of_birth
+                  type: VARCHAR(10)
+              - column:
+                  name: address
+                  type: VARCHAR(255)
+              - column:
+                  name: city
+                  type: VARCHAR(100)
+              - column:
+                  name: country
+                  type: VARCHAR(100)
+              - column:
+                  name: business_name
+                  type: VARCHAR(100)
+              - column:
+                  name: business_type
+                  type: VARCHAR(50)
+              - column:
+                  name: tax_id
+                  type: VARCHAR(50)
+              - column:
+                  name: business_address
+                  type: VARCHAR(255)
+              - column:
+                  name: business_phone
+                  type: VARCHAR(20)
+              - column:
+                  name: website
+                  type: VARCHAR(200)
+              - column:
+                  name: profile_verified
+                  type: BOOLEAN
+                  defaultValue: false
+              - column:
+                  name: verified_at
+                  type: TIMESTAMP
+              - column:
+                  name: verified_by
+                  type: INTEGER
+              - column:
+                  name: verification_notes
+                  type: TEXT
+              - column:
+                  name: updated_on
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: last_login_at
+                  type: TIMESTAMP
+
+  - changeSet:
+      id: user-module-002
+      author: system
+      changes:
+        # Create user_activity table
+        - createTable:
+            tableName: user_activity
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: activity_type
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: ip_address
+                  type: VARCHAR(45)
+              - column:
+                  name: user_agent
+                  type: TEXT
+              - column:
+                  name: metadata
+                  type: JSONB
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+        # Create user_notes table
+        - createTable:
+            tableName: user_notes
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: note_type
+                  type: VARCHAR(50)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+        # Create profile_verifications table
+        - createTable:
+            tableName: profile_verifications
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: verification_type
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: notes
+                  type: TEXT
+              - column:
+                  name: submitted_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: reviewed_at
+                  type: TIMESTAMP
+              - column:
+                  name: reviewed_by
+                  type: INTEGER
+
+        # Create pro_upgrade_requests table
+        - createTable:
+            tableName: pro_upgrade_requests
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: business_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: business_type
+                  type: VARCHAR(50)
+              - column:
+                  name: tax_id
+                  type: VARCHAR(50)
+              - column:
+                  name: business_address
+                  type: VARCHAR(255)
+              - column:
+                  name: business_phone
+                  type: VARCHAR(20)
+              - column:
+                  name: website
+                  type: VARCHAR(200)
+              - column:
+                  name: years_of_experience
+                  type: INTEGER
+              - column:
+                  name: reason
+                  type: TEXT
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: processing_notes
+                  type: TEXT
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: processed_at
+                  type: TIMESTAMP
+              - column:
+                  name: processed_by
+                  type: INTEGER
+
+        # Create user_notifications table
+        - createTable:
+            tableName: user_notifications
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: message
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: notification_type
+                  type: VARCHAR(50)
+              - column:
+                  name: priority
+                  type: VARCHAR(20)
+                  defaultValue: NORMAL
+              - column:
+                  name: is_read
+                  type: BOOLEAN
+                  defaultValue: false
+              - column:
+                  name: action_url
+                  type: VARCHAR(500)
+              - column:
+                  name: metadata
+                  type: JSONB
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: read_at
+                  type: TIMESTAMP
+
+        # Create notification_settings table
+        - createTable:
+            tableName: notification_settings
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: email_notifications
+                  type: BOOLEAN
+                  defaultValue: true
+              - column:
+                  name: sms_notifications
+                  type: BOOLEAN
+                  defaultValue: false
+              - column:
+                  name: push_notifications
+                  type: BOOLEAN
+                  defaultValue: true
+              - column:
+                  name: marketing_emails
+                  type: BOOLEAN
+                  defaultValue: true
+              - column:
+                  name: type_preferences
+                  type: JSONB
+              - column:
+                  name: frequency
+                  type: VARCHAR(20)
+                  defaultValue: INSTANT
+              - column:
+                  name: quiet_hours_start
+                  type: VARCHAR(5)
+              - column:
+                  name: quiet_hours_end
+                  type: VARCHAR(5)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+        # Create privacy_settings table
+        - createTable:
+            tableName: privacy_settings
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: profile_visibility
+                  type: VARCHAR(20)
+                  defaultValue: PUBLIC
+              - column:
+                  name: show_email
+                  type: BOOLEAN
+                  defaultValue: false
+              - column:
+                  name: show_phone
+                  type: BOOLEAN
+                  defaultValue: false
+              - column:
+                  name: allow_marketing
+                  type: BOOLEAN
+                  defaultValue: true
+              - column:
+                  name: allow_analytics
+                  type: BOOLEAN
+                  defaultValue: true
+              - column:
+                  name: data_retention
+                  type: VARCHAR(20)
+                  defaultValue: STANDARD
+              - column:
+                  name: third_party_sharing
+                  type: BOOLEAN
+                  defaultValue: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+        # Create agent_tasks table
+        - createTable:
+            tableName: agent_tasks
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: task_type
+                  type: VARCHAR(50)
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  defaultValue: PENDING
+              - column:
+                  name: priority
+                  type: VARCHAR(20)
+                  defaultValue: NORMAL
+              - column:
+                  name: assigned_to
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: related_entity_id
+                  type: BIGINT
+              - column:
+                  name: related_entity_type
+                  type: VARCHAR(50)
+              - column:
+                  name: due_date
+                  type: TIMESTAMP
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+  - changeSet:
+      id: user-module-003
+      author: system
+      changes:
+        # Add foreign keys
+        - addForeignKeyConstraint:
+            baseTableName: user_activity
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_user_activity_user
+
+        - addForeignKeyConstraint:
+            baseTableName: user_notes
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_user_notes_user
+
+        - addForeignKeyConstraint:
+            baseTableName: user_notes
+            baseColumnNames: created_by
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_user_notes_created_by
+
+        - addForeignKeyConstraint:
+            baseTableName: profile_verifications
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_profile_verifications_user
+
+        - addForeignKeyConstraint:
+            baseTableName: pro_upgrade_requests
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_pro_upgrade_requests_user
+
+        - addForeignKeyConstraint:
+            baseTableName: user_notifications
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_user_notifications_user
+
+        - addForeignKeyConstraint:
+            baseTableName: notification_settings
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_notification_settings_user
+
+        - addForeignKeyConstraint:
+            baseTableName: privacy_settings
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_privacy_settings_user
+
+        - addForeignKeyConstraint:
+            baseTableName: agent_tasks
+            baseColumnNames: assigned_to
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_agent_tasks_assigned_to
+
+        # Add indexes
+        - createIndex:
+            tableName: user_activity
+            indexName: idx_user_activity_user_id
+            columns:
+              - column:
+                  name: user_id
+
+        - createIndex:
+            tableName: user_activity
+            indexName: idx_user_activity_created_at
+            columns:
+              - column:
+                  name: created_at
+
+        - createIndex:
+            tableName: user_notifications
+            indexName: idx_user_notifications_user_id_read
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: is_read
+
+        - createIndex:
+            tableName: pro_upgrade_requests
+            indexName: idx_pro_upgrade_requests_status
+            columns:
+              - column:
+                  name: status
+
+        - createIndex:
+            tableName: agent_tasks
+            indexName: idx_agent_tasks_assigned_to_status
+            columns:
+              - column:
+                  name: assigned_to
+              - column:
+                  name: status

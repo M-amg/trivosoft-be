@@ -1,9 +1,8 @@
 package com.zenthrex.security.model;
 
 import com.zenthrex.core.entites.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.experimental.SuperBuilder;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+@Getter
+@Setter
 public class Account extends User implements UserDetails {
 
     public Account(User user) {
@@ -22,6 +23,7 @@ public class Account extends User implements UserDetails {
         this.setEmail(user.getEmail());
         this.setPassword(user.getPassword());
         this.setStatus(user.getStatus());
+        this.setCreatedOn(user.getCreatedOn());
         this.setRole(user.getRole());
         this.setTokens(user.getTokens());
     }
@@ -58,11 +60,6 @@ public class Account extends User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
     }
 
     @Override

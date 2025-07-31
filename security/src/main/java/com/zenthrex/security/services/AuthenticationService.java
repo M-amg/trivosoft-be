@@ -27,26 +27,33 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthenticationService {
-    private final UserRepository accountRepository;
+    private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
-        var user = (Account)
-                Account.builder()
-                        .firstname(request.firstname())
-                        .lastname(request.lastname())
-                        .email(request.email())
-                        .phone(request.phone())
-                        .password(passwordEncoder.encode(request.password()))
-                        .role(request.role())
-                        .build();
-        var savedUser = accountRepository.save(user);
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
+        // Create User entity, not Account
+        var user = User.builder()
+                .firstname(request.firstname())
+                .lastname(request.lastname())
+                .email(request.email())
+                .phone(request.phone())
+                .password(passwordEncoder.encode(request.password()))
+                .role(request.role())
+                .build();
+
+        var savedUser = userRepository.save(user);
+
+        // Create Account wrapper for JWT generation
+        var account = new Account(savedUser);
+
+        var jwtToken = jwtService.generateToken(account);
+        var refreshToken = jwtService.generateRefreshToken(account);
+
         saveUserToken(savedUser, jwtToken);
+
         return new AuthenticationResponse(jwtToken, refreshToken, savedUser);
     }
 
@@ -54,36 +61,42 @@ public class AuthenticationService {
         log.info("request to login {}", request);
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.email(), request.password()));
-        var user = new Account(accountRepository.findByEmail(request.email()).orElseThrow(() -> new ResourceNotFoundException(" user not found")));
+
+        var user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new ResourceNotFoundException("user not found"));
+
+        // Create Account wrapper
+        var account = new Account(user);
+
         log.info("user loaded {}", user);
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
+        var jwtToken = jwtService.generateToken(account);
+        var refreshToken = jwtService.generateRefreshToken(account);
+
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
+
         return new AuthenticationResponse(jwtToken, refreshToken, user);
     }
 
-    private void saveUserToken(Account user, String jwtToken) {
-        var token =
-                Token.builder()
-                        .user(user)
-                        .token(jwtToken)
-                        .tokenType(TokenType.BEARER)
-                        .expired(false)
-                        .revoked(false)
-                        .build();
+    private void saveUserToken(User user, String jwtToken) {
+        var token = Token.builder()
+                .user(user)
+                .token(jwtToken)
+                .tokenType(TokenType.BEARER)
+                .expired(false)
+                .revoked(false)
+                .build();
         tokenRepository.save(token);
     }
 
-    private void revokeAllUserTokens(Account user) {
+    private void revokeAllUserTokens(User user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
         log.info("validUserTokens {}", validUserTokens);
         if (validUserTokens.isEmpty()) return;
-        validUserTokens.forEach(
-                token -> {
-                    token.setExpired(true);
-                    token.setRevoked(true);
-                });
+        validUserTokens.forEach(token -> {
+            token.setExpired(true);
+            token.setRevoked(true);
+        });
         tokenRepository.saveAll(validUserTokens);
     }
 
@@ -98,32 +111,19 @@ public class AuthenticationService {
         refreshToken = authHeader.substring(7);
         userEmail = jwtService.extractUsername(refreshToken);
         if (userEmail != null) {
-            // todo custom add exception
-            var user = (Account) this.accountRepository.findByEmail(userEmail).orElseThrow();
-            if (jwtService.isTokenValid(refreshToken, user)) {
-                var accessToken = jwtService.generateToken(user);
+            var user = this.userRepository.findByEmail(userEmail)
+                    .orElseThrow(() -> new ResourceNotFoundException("user not found"));
+
+            // Create Account wrapper
+            var account = new Account(user);
+
+            if (jwtService.isTokenValid(refreshToken, account)) {
+                var accessToken = jwtService.generateToken(account);
                 revokeAllUserTokens(user);
                 saveUserToken(user, accessToken);
                 var authResponse = new AuthenticationResponse(accessToken, refreshToken, user);
                 new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
             }
         }
-    }
-
-    private Account convertToAccount(User user) {
-        if (user == null) {
-            return null;
-        }
-        return (Account) Account.builder()
-                .id(user.getId())
-                .firstname(user.getFirstname())
-                .lastname(user.getLastname())
-                .phone(user.getPhone())
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .status(user.getStatus())
-                .role(user.getRole())
-                .tokens(user.getTokens())
-                .build();
     }
 }

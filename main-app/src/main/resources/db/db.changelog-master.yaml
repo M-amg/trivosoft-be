@@ -1,3 +1,7 @@
 databaseChangeLog:
   - includeAll:
-      path: db/changelog/caravan
+      path: db/changelog/users
+  - includeAll:
+      path: db/changelog/accessory
+  - includeAll:
+      path: db/changelog/user
