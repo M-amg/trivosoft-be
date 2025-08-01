@@ -1,9 +1,9 @@
 package com.zenthrex.core.entites.crm;
 
+
 import com.zenthrex.core.entites.user.User;
 import com.zenthrex.core.enums.Currency;
-import com.zenthrex.core.enums.PaymentMethod;
-import com.zenthrex.core.enums.PaymentStatus;
+import com.zenthrex.core.enums.RefundStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,23 +11,26 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
-@Table(name = "payments")
+@Table(name = "refunds")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Payment {
+public class Refund {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "payment_number", nullable = false, unique = true)
-    private String paymentNumber;
+    @Column(name = "refund_number", nullable = false, unique = true)
+    private String refundNumber;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "original_payment_id", nullable = false)
+    private Payment originalPayment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
@@ -49,30 +52,11 @@ public class Payment {
     private Currency currency;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_method", nullable = false)
-    private PaymentMethod paymentMethod;
-
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PaymentStatus status;
+    private RefundStatus status;
 
-    @Column(name = "reference_number")
-    private String referenceNumber;
-
-    @Column(name = "transaction_id")
-    private String transactionId;
-
-    @Column(name = "gateway_response", columnDefinition = "TEXT")
-    private String gatewayResponse;
-
-    @Column(name = "gateway_reference")
-    private String gatewayReference;
-
-    @Column(name = "processing_fee", precision = 12, scale = 2)
-    private BigDecimal processingFee;
-
-    @Column(name = "net_amount", precision = 12, scale = 2)
-    private BigDecimal netAmount;
+    @Column(name = "reason", nullable = false)
+    private String reason;
 
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
@@ -80,11 +64,26 @@ public class Payment {
     @Column(name = "internal_notes", columnDefinition = "TEXT")
     private String internalNotes;
 
-    @Column(name = "processed_at")
-    private LocalDateTime processedAt;
+    @Column(name = "gateway_refund_id")
+    private String gatewayRefundId;
+
+    @Column(name = "gateway_response", columnDefinition = "TEXT")
+    private String gatewayResponse;
+
+    @Column(name = "requested_by", nullable = false)
+    private Long requestedBy;
+
+    @Column(name = "approved_by")
+    private Long approvedBy;
 
     @Column(name = "processed_by")
     private Long processedBy;
+
+    @Column(name = "approved_at")
+    private LocalDateTime approvedAt;
+
+    @Column(name = "processed_at")
+    private LocalDateTime processedAt;
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -93,10 +92,5 @@ public class Payment {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<PaymentTransaction> transactions;
-
-    @OneToMany(mappedBy = "originalPayment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Refund> refunds;
 }
+
