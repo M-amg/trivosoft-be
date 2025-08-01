@@ -34,7 +34,7 @@ public class RefundDto {
 
     @Schema(description = "Customer information")
     @Valid
-    private CustomerDto customer;
+    private com.zenthrex.crm.dto.CustomerDto customer;
 
     @Schema(description = "Refund amount")
     private BigDecimal amount;
