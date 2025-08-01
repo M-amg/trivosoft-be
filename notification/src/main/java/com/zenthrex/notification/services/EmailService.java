@@ -4,7 +4,8 @@ package com.zenthrex.notification.services;
 import com.zenthrex.core.entites.accessory.Accessory;
 import com.zenthrex.core.entites.caravan.Caravan;
 import com.zenthrex.core.entites.caravan.CaravanBooking;
-import com.zenthrex.core.entites.crm.ProcurementOrder;
+import com.zenthrex.core.entites.crm.Order;
+
 import com.zenthrex.core.entites.user.User;
 
 public interface EmailService {
@@ -17,10 +18,10 @@ public interface EmailService {
     void sendProUpgradeResult(User user, boolean approved, String notes);
 
     // Order notifications
-    void sendOrderConfirmation(ProcurementOrder order);
-    void sendOrderStatusUpdate(ProcurementOrder order, String oldStatus);
-    void sendOrderCompletion(ProcurementOrder order);
-    void sendOrderCancellation(ProcurementOrder order, String reason);
+    void sendOrderConfirmation(Order order);
+    void sendOrderStatusUpdate(Order order, String oldStatus);
+    void sendOrderCompletion(Order order);
+    void sendOrderCancellation(Order order, String reason);
 
     // Caravan notifications
     void sendCaravanBookingConfirmation(CaravanBooking booking);

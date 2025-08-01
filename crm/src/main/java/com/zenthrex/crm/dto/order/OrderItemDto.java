@@ -27,6 +27,9 @@ public class OrderItemDto {
     @Schema(description = "Item ID reference")
     private Long itemId;
 
+    @Schema(description = "order ID reference")
+    private Long orderId;
+
     @Schema(description = "Item name")
     private String itemName;
 

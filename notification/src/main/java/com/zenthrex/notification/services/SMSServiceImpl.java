@@ -1,7 +1,7 @@
 package com.zenthrex.notification.services;
 
 import com.zenthrex.core.entites.caravan.CaravanBooking;
-import com.zenthrex.core.entites.crm.ProcurementOrder;
+import com.zenthrex.core.entites.crm.Order;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,10 +42,10 @@ public class SMSServiceImpl implements SMSService {
     }
 
     @Override
-    public void sendPaymentConfirmation(String phoneNumber, ProcurementOrder order) {
+    public void sendPaymentConfirmation(String phoneNumber, Order order) {
         String message = String.format(
                 "TrivoSoft: Paiement confirmé pour la commande %s (%.2f€). Merci!",
-                order.getNumber(), order.getTotal());
+                order.getOrderNumber(), order.getTotalAmount());
 
         sendSMS(phoneNumber, message);
         log.info("Payment confirmation SMS sent to: {}", phoneNumber);

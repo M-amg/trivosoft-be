@@ -1,7 +1,7 @@
 package com.zenthrex.notification.services;
 
 import com.zenthrex.core.entites.caravan.CaravanBooking;
-import com.zenthrex.core.entites.crm.ProcurementOrder;
+import com.zenthrex.core.entites.crm.Order;
 
 public interface SMSService {
 
@@ -11,5 +11,5 @@ public interface SMSService {
 
     void sendSecurityCode(String phoneNumber, String code);
 
-    void sendPaymentConfirmation(String phoneNumber, ProcurementOrder order);
+    void sendPaymentConfirmation(String phoneNumber, Order order);
 }

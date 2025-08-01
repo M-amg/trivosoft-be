@@ -3,7 +3,7 @@ package com.zenthrex.notification.services;
 import com.zenthrex.core.entites.accessory.Accessory;
 import com.zenthrex.core.entites.caravan.Caravan;
 import com.zenthrex.core.entites.caravan.CaravanBooking;
-import com.zenthrex.core.entites.crm.ProcurementOrder;
+import com.zenthrex.core.entites.crm.Order;
 import com.zenthrex.core.entites.user.User;
 
 /**
@@ -30,13 +30,13 @@ public interface NotificationService {
     /**
      * Order-related notifications
      */
-    void sendOrderConfirmation(ProcurementOrder order);
+    void sendOrderConfirmation(Order order);
 
-    void sendOrderStatusUpdate(ProcurementOrder order, String oldStatus);
+    void sendOrderStatusUpdate(Order order, String oldStatus);
 
-    void sendOrderCompletion(ProcurementOrder order);
+    void sendOrderCompletion(Order order);
 
-    void sendOrderCancellation(ProcurementOrder order, String reason);
+    void sendOrderCancellation(Order order, String reason);
 
     /**
      * Caravan-related notifications
@@ -81,7 +81,7 @@ public interface NotificationService {
 
     void sendSecurityCodeSMS(User user, String code);
 
-    void sendPaymentConfirmationSMS(User user, ProcurementOrder order);
+    void sendPaymentConfirmationSMS(User user, Order order);
 
     // ==================== PUSH NOTIFICATIONS ====================
 

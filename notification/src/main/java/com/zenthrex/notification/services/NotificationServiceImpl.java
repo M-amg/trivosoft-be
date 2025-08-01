@@ -3,7 +3,7 @@ package com.zenthrex.notification.services;
 import com.zenthrex.core.entites.accessory.Accessory;
 import com.zenthrex.core.entites.caravan.Caravan;
 import com.zenthrex.core.entites.caravan.CaravanBooking;
-import com.zenthrex.core.entites.crm.ProcurementOrder;
+import com.zenthrex.core.entites.crm.Order;
 import com.zenthrex.core.entites.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,8 +66,8 @@ public class NotificationServiceImpl implements NotificationService {
     // ==================== ORDER NOTIFICATIONS ====================
 
     @Override
-    public void sendOrderConfirmation(ProcurementOrder order) {
-        log.info("Sending order confirmation for: {}", order.getNumber());
+    public void sendOrderConfirmation(Order order) {
+        log.info("Sending order confirmation for: {}", order.getOrderNumber());
         emailService.sendOrderConfirmation(order);
 
         // Create in-app notification
@@ -75,26 +75,26 @@ public class NotificationServiceImpl implements NotificationService {
         if (customer != null) {
             inAppNotificationService.createNotification(customer,
                     "Commande confirmée",
-                    "Votre commande " + order.getNumber() + " a été confirmée",
+                    "Votre commande " + order.getOrderNumber() + " a été confirmée",
                     "ORDER");
         }
     }
 
     @Override
-    public void sendOrderStatusUpdate(ProcurementOrder order, String oldStatus) {
-        log.info("Sending order status update for: {}", order.getNumber());
+    public void sendOrderStatusUpdate(Order order, String oldStatus) {
+        log.info("Sending order status update for: {}", order.getOrderNumber());
         emailService.sendOrderStatusUpdate(order, oldStatus);
     }
 
     @Override
-    public void sendOrderCompletion(ProcurementOrder order) {
-        log.info("Sending order completion for: {}", order.getNumber());
+    public void sendOrderCompletion(Order order) {
+        log.info("Sending order completion for: {}", order.getOrderNumber());
         emailService.sendOrderCompletion(order);
     }
 
     @Override
-    public void sendOrderCancellation(ProcurementOrder order, String reason) {
-        log.info("Sending order cancellation for: {}", order.getNumber());
+    public void sendOrderCancellation(Order order, String reason) {
+        log.info("Sending order cancellation for: {}", order.getOrderNumber());
         emailService.sendOrderCancellation(order, reason);
     }
 
@@ -194,7 +194,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void sendPaymentConfirmationSMS(User user, ProcurementOrder order) {
+    public void sendPaymentConfirmationSMS(User user, Order order) {
         if (user.getPhone() != null) {
             smsService.sendPaymentConfirmation(user.getPhone(), order);
         }
@@ -234,7 +234,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     // ==================== HELPER METHODS ====================
 
-    private User getOrderCustomer(ProcurementOrder order) {
+    private User getOrderCustomer(Order order) {
         // Implementation would get customer from order
         // This is a placeholder
         return null;

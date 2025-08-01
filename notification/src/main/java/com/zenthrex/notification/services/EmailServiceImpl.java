@@ -4,7 +4,7 @@ package com.zenthrex.notification.services;
 import com.zenthrex.core.entites.accessory.Accessory;
 import com.zenthrex.core.entites.caravan.Caravan;
 import com.zenthrex.core.entites.caravan.CaravanBooking;
-import com.zenthrex.core.entites.crm.ProcurementOrder;
+import com.zenthrex.core.entites.crm.Order;
 import com.zenthrex.core.entites.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -96,27 +96,27 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendOrderConfirmation(ProcurementOrder order) {
+    public void sendOrderConfirmation(Order order) {
         // Implementation for order confirmation
-        log.info("Order confirmation email sent for order: {}", order.getNumber());
+        log.info("Order confirmation email sent for order: {}", order.getOrderNumber());
     }
 
     @Override
-    public void sendOrderStatusUpdate(ProcurementOrder order, String oldStatus) {
+    public void sendOrderStatusUpdate(Order order, String oldStatus) {
         // Implementation for order status update
-        log.info("Order status update email sent for order: {}", order.getNumber());
+        log.info("Order status update email sent for order: {}", order.getOrderNumber());
     }
 
     @Override
-    public void sendOrderCompletion(ProcurementOrder order) {
+    public void sendOrderCompletion(Order order) {
         // Implementation for order completion
-        log.info("Order completion email sent for order: {}", order.getNumber());
+        log.info("Order completion email sent for order: {}", order.getOrderNumber());
     }
 
     @Override
-    public void sendOrderCancellation(ProcurementOrder order, String reason) {
+    public void sendOrderCancellation(Order order, String reason) {
         // Implementation for order cancellation
-        log.info("Order cancellation email sent for order: {}", order.getNumber());
+        log.info("Order cancellation email sent for order: {}", order.getOrderNumber());
     }
 
     @Override
